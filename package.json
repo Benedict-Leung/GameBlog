@@ -1,0 +1,31 @@
+{
+  "name": "majorgroupproject-the-a-team",
+  "version": "1.0.0",
+  "description": "Before you submit your project, modify the following table to include everyone's full name and GitHub usernames:",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.1.0",
+    "socket.io-client": "^3.1.0",
+    "three": "^0.125.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.18.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "postinstall": "webpack",
+    "build": "webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CSCI3230U/majorgroupproject-the-a-team.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CSCI3230U/majorgroupproject-the-a-team/issues"
+  },
+  "homepage": "https://github.com/CSCI3230U/majorgroupproject-the-a-team#readme"
+}
