@@ -14,10 +14,15 @@ function init(server) {
     io.on('connection', function(socket) {
         // Add player to room
         socket.on('join', function (data) {
-            room.addPlayer(socket);
             console.log('Connected');
             console.log(room.playerSockets.size);
             io.sockets.emit('message', `${data} has joined the game.`);
+            socket.broadcast.emit('addPlayer', socket.id);
+        });
+
+        socket.on('getRoom', function () {
+            room.addPlayer(socket);
+            socket.emit('create', Array.from(room.getPlayers()));
         });
         
         // Send player's info to the room

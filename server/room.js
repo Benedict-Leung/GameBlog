@@ -4,7 +4,7 @@
 class Room {
     constructor() {
         this.playerSockets = new Map(); // Stores socket (key: id, value: socket)
-        this.players = new Map();
+        this.players = new Map(); // Stores players position and rotation
     }
 
     /**
@@ -43,6 +43,13 @@ class Room {
         this.playerSockets.forEach((socket, id) => {
             socket.emit('update', Array.from(this.players));
         });
+    }
+
+    /**
+     * Get players info
+     */
+    getPlayers() {
+        return this.players;
     }
 }
 

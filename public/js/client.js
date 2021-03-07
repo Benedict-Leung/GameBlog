@@ -7,10 +7,16 @@ $(document).ready(function () {
 
     // Create canvas when connected
     socket.on('connect', function() {        
-        canvas = new CANVAS().create(socket.id, socket);
-        socket.emit('join', 'User ' + Math.floor(Math.random() * 100));
-        canvas.init();
-    })
+        socket.emit('getRoom', '');
+    });
+
+    socket.on('create', async function(data) {
+        new CANVAS().create(socket.id, socket, data).then((c) => {
+            canvas = c;
+            c.init();
+            socket.emit('join', 'User ' + Math.floor(Math.random() * 100));
+        });
+    });
     
     socket.on('message', function (data) {
         $('body').prepend(`<div style="position: fixed">${data}</div>`);
@@ -18,7 +24,12 @@ $(document).ready(function () {
     
     // Update canvas
     socket.on('update', (data) => {
-        canvas.update(data);
+        if (canvas != null)
+            canvas.update(data);
+    });
+
+    socket.on('addPlayer', (data) => {
+        canvas.addPlayer(data, {x: 0, y: 0.82, z: 0}, {x: 0, y: 0, z: 0});
     });
 
     // Remove player
