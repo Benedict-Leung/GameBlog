@@ -20,6 +20,7 @@ function init(server) {
             socket.broadcast.emit('addPlayer', socket.id);
         });
 
+        // Get initial players from room
         socket.on('getRoom', function () {
             room.addPlayer(socket);
             socket.emit('create', Array.from(room.getPlayers()));
@@ -28,6 +29,11 @@ function init(server) {
         // Send player's info to the room
         socket.on('input', function(data) {
             room.updatePlayer(data);
+        });
+
+        // Create explosion
+        socket.on('hit', function(data) {
+            io.sockets.emit('createExplosion', data);
         });
         
         // Remove player from room

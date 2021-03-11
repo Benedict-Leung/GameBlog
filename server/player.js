@@ -1,5 +1,5 @@
 let FBXLoader = require('three/examples/jsm/loaders/FBXLoader.js');
-let THREE = require('three')
+let THREE = require('three');
 
 /**
  * Player class
@@ -32,7 +32,7 @@ class Player {
      */
     async create(id) {
         const loader = new FBXLoader.FBXLoader();
-        const model = await loader.loadAsync('./tank.fbx');
+        const model = await loader.loadAsync('./assets/tank.fbx');
 
         let mesh = model.children[1];
         mesh.castShadow = true;
@@ -85,7 +85,7 @@ class Player {
         let position = this.getModel().animations[0].tracks[0].values;
         
         // Change animation's position based on player's position
-        for (var i = 0; i < position.length; i += 3) {
+        for (i = 0; i < position.length; i += 3) {
             let headingX = Math.sin(this.getRotation().y) * this.positionValues[i + 2];
             let headingZ = Math.cos(this.getRotation().y) * this.positionValues[i + 2];
             position[i] = headingX + this.getPosition().x;

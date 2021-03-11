@@ -2,6 +2,7 @@ let THREE = require('three');
 let PLAYER = require('./player.js');
 let CONTROL = require('../public/js/control.js');
 let Stats = require('three/examples/jsm/libs/stats.module.js');
+let ParticleSystem = require('./particleSystem.js');
 
 /**
  * Three.js Canvas
@@ -22,6 +23,7 @@ class Canvas {
         this.camera = camera;
         this.spotLight = spotLight;
         this.players = players;   // Stores all players position and rotation
+        this.particleSystem = null;
     }
 
     /**
@@ -34,7 +36,7 @@ class Canvas {
         // Scene
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0xa0a0a0);
-        scene.fog = new THREE.Fog(0xa0a0a0, 10, 100);
+        scene.fog = new THREE.Fog(0xa0a0a0, 10, 150);
 
         // Camera
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
@@ -57,18 +59,6 @@ class Canvas {
         scene.add(spotLight);
         scene.add(spotLight.target);
 
-        // Spotlight helper
-        let lightHelper = new THREE.SpotLightHelper(spotLight);
-        scene.add(lightHelper);
-
-        // Shadow helper
-        let shadowCameraHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-        scene.add(shadowCameraHelper);
-
-        // Shadow camera helper
-        const helper = new THREE.CameraHelper(spotLight.shadow.camera);
-        scene.add(helper);
-
         // Ground
         let material = new THREE.MeshPhongMaterial({color: 0x808080, dithering: true});
         let geometry = new THREE.PlaneBufferGeometry(100, 100, 100, 100);
@@ -78,6 +68,7 @@ class Canvas {
         ground.receiveShadow = true;
         scene.add( ground );
 
+        // Walls
         material = new THREE.MeshBasicMaterial( {color: 0x87CEEB, side: THREE.DoubleSide, dithering: true} );
         geometry = new THREE.PlaneBufferGeometry(100, 50, 100, 100);
         let plane = new THREE.Mesh( geometry, material );
@@ -108,6 +99,7 @@ class Canvas {
         grid.material.transparent = true;
         scene.add(grid);
         
+        // Players from the room
         let players = new Map();
 
         for (var i = 0; i < playersInfo.length; i++) {
@@ -139,35 +131,68 @@ class Canvas {
         window.addEventListener('resize', () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
-            
             renderer.setSize(window.innerWidth, window.innerHeight);
         }, false );
         
+        // Custom Particle System
+        this.particleSystem = new ParticleSystem(this.scene);
+        
+        this.scene.traverse(function(object) {
+            object.frustumCulled = false;
+        } );
+        const raycaster = new THREE.Raycaster();
+
         // Create player and controls for the user
         new PLAYER().create(this.id).then((player) => {
             let controls = new CONTROL();
+            let previousShoot = false;
             controls.create();
             this.scene.add(player.getModel());    
-    
+            
             // Stats
             var stats = new Stats.default();
-            document.body.appendChild( stats.dom );
+            document.body.appendChild(stats.dom);
             stats.begin();
             
             // Animate function
-            const animate = () => {
-                stats.update(); // Update stats
-                
+            const animate = () => {				
+                // Move model
                 if (!player.isShoot()) {
                     updatePositionRotation(); // Update position and rotation only when not shooting
                 }
                 
                 // Shooting animation function
                 if (controls.getInput().shoot && !player.isShoot()) {
+                    // Initiate shooting animation
                     player.shoot();
+                    previousShoot = true;
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
+                    
+                    let headingX = Math.sin(player.getRotation().y);
+                    let headingZ = Math.cos(player.getRotation().y);
+                    
+                    // Get objects that intersects with line of fire (where the player is facing)
+                    raycaster.set(new THREE.Vector3(player.getPosition().x, 1.1, player.getPosition().z), new THREE.Vector3(headingX, 0, headingZ).normalize());
+                    raycaster.near = 1;
+                    raycaster.far = 200;
+                    const intersects = raycaster.intersectObjects(this.scene.children);
+
+                    // If there are objects in line of fire, send location to the socket
+                    if (intersects[0] != undefined) {
+                        this.socket.emit('hit', {x: intersects[0].point.x, y: intersects[0].point.y, z: intersects[0].point.z});
+                    }
                 }
+
+                // Send player model's data to socket if done shooting
+                if (previousShoot != player.isShoot()) {
+                    previousShoot = false;
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
+                }
+                player.update(); // Update player animation (for tracking shooting animation)
+                this.particleSystem.update(); // Update particle system
+                stats.update(); // Update stats
+
                 renderer.render(this.scene, this.camera);
-                player.update();
                 requestAnimationFrame(animate);
             };
 
@@ -213,7 +238,7 @@ class Canvas {
 
                 // Emit position and rotation info 
                 if (controls.getInput().forward || controls.getInput().backward || controls.getInput().left || controls.getInput().right) {
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation()});
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
                 }
             }
             animate();
@@ -255,14 +280,23 @@ class Canvas {
     update(data) {
         data.forEach(player => {
             if (player[0] != this.id) {
-                // Add player if it does not exist in the player map
+                // Set the location of the players
                 if (this.players.get(player[0]) != undefined && this.players.get(player[0]) != 'Loading') {
                     this.players.get(player[0]).setPosition(player[1].position.x, player[1].position.y, player[1].position.z);
                     this.players.get(player[0]).setRotation(player[1].rotation.x, player[1].rotation.y, player[1].rotation.z);
+                    
+                    // Initiate shooting animation if they are shooting
+                    if (!this.players.get(player[0]).isShoot() && player[1].onShoot) {
+                        this.players.get(player[0]).shoot();
+                    } else {
+                        this.players.get(player[0]).update();
+                    }
                 }
             }
         });
     }
+
+    
 
     /**
      * Return socket ID

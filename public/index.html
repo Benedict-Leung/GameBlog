@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>My first three.js app</title>
+		<title>GameBlog</title>
 		<style>
 			body { margin: 0; }
         </style>
@@ -9,6 +9,33 @@
         <script src="./bundle.js"></script>
 	</head>
 	<body>
-		
+		<script type="x-shader/x-vertex" id="vertexshader">
+
+			attribute float size;
+			varying vec3 vColor;
+
+			void main() {
+				vColor = color;
+				vec4 mvPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+				gl_PointSize = (1.0 - mvPosition.z / mvPosition.w) * size * 50.0;
+				gl_Position = mvPosition;
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform sampler2D pointTexture;
+			varying vec3 vColor;
+
+			void main() {
+				gl_FragColor = vec4(vColor, 1.0);
+                if (texture2D(pointTexture, gl_PointCoord ).a < 0.1) discard;
+
+
+				gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
+			}
+
+		</script>
 	</body>
 </html>

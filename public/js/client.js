@@ -10,6 +10,7 @@ $(document).ready(function () {
         socket.emit('getRoom', '');
     });
 
+    // Create canvas
     socket.on('create', async function(data) {
         new CANVAS().create(socket.id, socket, data).then((c) => {
             canvas = c;
@@ -18,8 +19,16 @@ $(document).ready(function () {
         });
     });
     
+    // Display message
     socket.on('message', function (data) {
         $('body').prepend(`<div style="position: fixed">${data}</div>`);
+    });
+
+    // Create explosion
+    socket.on('createExplosion', (data) => {
+        if (canvas.particleSystem != undefined) {
+            canvas.particleSystem.createExplosion(data.x, data.y, data.z);
+        }
     });
     
     // Update canvas
@@ -28,6 +37,7 @@ $(document).ready(function () {
             canvas.update(data);
     });
 
+    // Add player
     socket.on('addPlayer', (data) => {
         canvas.addPlayer(data, {x: 0, y: 0.82, z: 0}, {x: 0, y: 0, z: 0});
     });
