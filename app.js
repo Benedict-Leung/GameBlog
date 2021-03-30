@@ -15,6 +15,9 @@ var path = require('path');
 global.appRoot = path.resolve(__dirname);
 global.viewPath = appRoot + "/public/views";
 
+app.set('view engine', 'ejs');
+app.set("views", global.viewPath);
+
 //  Connect all our routes to our application
 app.use('/', gamePageRouter);
 app.use('/home', homePageRouter);
