@@ -11,7 +11,7 @@ $(document).ready(function () {
     });
 
     // Create canvas
-    socket.on('create', async function(data) {
+    socket.on('create', function(data) {
         new CANVAS().create(socket.id, socket, data).then((c) => {
             canvas = c;
             c.init();
@@ -39,7 +39,7 @@ $(document).ready(function () {
 
     // Add player
     socket.on('addPlayer', (data) => {
-        canvas.addPlayer(data, {x: 0, y: 0.82, z: 0}, {x: 0, y: 0, z: 0});
+        canvas.addPlayer(data, {x: 0, y: 1.2, z: 0}, {x: 0, y: 0, z: 0});
     });
 
     // Remove player

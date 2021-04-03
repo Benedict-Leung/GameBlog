@@ -35,17 +35,17 @@ class Canvas {
     async create(id, socket, playersInfo) {
         // Scene
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xa0a0a0);
-        scene.fog = new THREE.Fog(0xa0a0a0, 10, 150);
+        scene.background = new THREE.Color().setHSL(0.6, 0, 1);
+        scene.fog = new THREE.Fog(scene.background, 1, 200); 
 
         // Camera
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.set(0, 4, -6);
-        camera.lookAt(0, 0.82, 0)
+        camera.lookAt(0, 1.2, 0);
 
         // Ambient light
-        const ambient = new THREE.AmbientLight(0x404040, 4);
-        scene.add( ambient );
+        const ambient = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambient);
 
         // Spotlight
         let spotLight = new THREE.SpotLight(0x404040, 2);
@@ -59,46 +59,116 @@ class Canvas {
         scene.add(spotLight);
         scene.add(spotLight.target);
 
+        // Hemishere light
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+        hemiLight.color.setHSL(0.6, 1, 0.6);
+        hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+        hemiLight.position.set(0, 20, 0);
+        scene.add(hemiLight);
+        
+        // Dome
+        const vertexShader = document.getElementById('skyvertexShader').textContent;
+        const fragmentShader = document.getElementById('skyfragmentShader').textContent;
+        const uniforms = {
+            "topColor": {value: new THREE.Color(0x0077ff) },
+            "bottomColor": {value: new THREE.Color().setHSL(0.095, 1, 0.75)},
+            "offset": {value: 33},
+            "exponent": {value: 0.6}
+        };
+        uniforms[ "topColor" ].value.copy(hemiLight.color);
+        scene.fog.color.copy(uniforms[ "bottomColor" ].value);
+
+        const skyGeo = new THREE.SphereGeometry(100, 32, 15);
+        const skyMat = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
+            side: THREE.BackSide
+        });
+        const sky = new THREE.Mesh(skyGeo, skyMat);
+        scene.add(sky);
+
         // Ground
-        let material = new THREE.MeshPhongMaterial({color: 0x808080, dithering: true});
-        let geometry = new THREE.PlaneBufferGeometry(100, 100, 100, 100);
+        const textureLoader = new THREE.TextureLoader();
+
+        function floorSettigs (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(3, 3);
+        }
+        let alphaMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_opacity.jpg", floorSettigs);
+        let aoMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_ambientOcclusion.jpg", floorSettigs);
+        let envMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_basecolor.jpg", floorSettigs);
+        let displacementMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_height.png", floorSettigs);
+        let normalMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_normal.jpg", floorSettigs);
+        let metalnessMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_metallic.jpg", floorSettigs);
+        let roughnessMap = textureLoader.load("assets/floor/Sci-fi_Floor_002_roughness.jpg", floorSettigs);
+
+        let material = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            alphaMap: alphaMap,
+            alphaTest: 0.5,
+            normalMap: normalMap,
+            aoMap: aoMap,
+            displacementMap: displacementMap,
+            map: envMap,
+            metalnessMap: metalnessMap,
+            roughnessMap: roughnessMap
+        });
+        let geometry = new THREE.PlaneBufferGeometry(100, 100, 1, 1);
 
         let ground = new THREE.Mesh(geometry, material);
-        ground.rotation.x = - Math.PI * 0.5;
+        ground.rotation.x = -Math.PI * 0.5;
         ground.receiveShadow = true;
-        scene.add( ground );
+        scene.add(ground);
 
         // Walls
-        material = new THREE.MeshBasicMaterial( {color: 0x87CEEB, side: THREE.DoubleSide, dithering: true} );
-        geometry = new THREE.PlaneBufferGeometry(100, 50, 100, 100);
-        let plane = new THREE.Mesh( geometry, material );
-        plane.receiveShadow = true;
-        plane.position.set(0, 25, -50);
-        scene.add( plane );
+        function processTexture (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(10, 1);
+        }
+        aoMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_ambientOcclusion.png", processTexture);
+        envMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_basecolor.png", processTexture);
+        displacementMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_height.png", processTexture);
+        normalMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_normal.png", processTexture);
+        metalnessMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_metallic.png", processTexture);
+        roughnessMap = textureLoader.load("assets/metal/Sci-fi_Walll_001_roughness.png", processTexture);
 
-        plane = new THREE.Mesh( geometry, material );
-        plane.receiveShadow = true;
-        plane.position.set(0, 25, 50);
-        scene.add( plane )
+        material = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            normalMap: normalMap,
+            aoMap: aoMap,
+            displacementMap: displacementMap,
+            map: envMap,
+            metalnessMap: metalnessMap,
+            roughnessMap: roughnessMap,
+            dithering: true
+        });
 
-        plane = new THREE.Mesh( geometry, material );
+        geometry = new THREE.PlaneBufferGeometry(100, 10, 100, 100);
+
+        let plane = new THREE.Mesh(geometry, material);
         plane.receiveShadow = true;
-        plane.position.set(50, 25, 0);
+        plane.position.set(0, 5, -50);
+        scene.add(plane);
+
+        plane = new THREE.Mesh(geometry, material);
+        plane.receiveShadow = true;
+        plane.position.set(0, 5, 50);
+        plane.rotation.y = Math.PI;
+        scene.add(plane)
+
+        plane = new THREE.Mesh(geometry, material);
+        plane.receiveShadow = true;
+        plane.position.set(50, 5, 0);
+        plane.rotation.y = Math.PI * -0.5;
+        scene.add(plane)
+
+        plane = new THREE.Mesh(geometry, material);
+        plane.receiveShadow = true;
+        plane.position.set(-50, 5, 0);
         plane.rotation.y = Math.PI * 0.5;
-        scene.add( plane )
+        scene.add(plane)
 
-        plane = new THREE.Mesh( geometry, material );
-        plane.receiveShadow = true;
-        plane.position.set(-50, 25, 0);
-        plane.rotation.y = Math.PI * 0.5;
-        scene.add( plane )
-
-        // Grid
-        const grid = new THREE.GridHelper(100, 40, 0x000000, 0x000000);
-        grid.material.opacity = 0.2;
-        grid.material.transparent = true;
-        scene.add(grid);
-        
         // Players from the room
         let players = new Map();
 
@@ -125,21 +195,20 @@ class Canvas {
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.body.appendChild(renderer.domElement);
         
         // Change aspect ratio when window changes size
         window.addEventListener('resize', () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false );
+        }, false);
         
         // Custom Particle System
         this.particleSystem = new ParticleSystem(this.scene);
         
         this.scene.traverse(function(object) {
             object.frustumCulled = false;
-        } );
+        });
         const raycaster = new THREE.Raycaster();
 
         // Create player and controls for the user
@@ -157,37 +226,10 @@ class Canvas {
             // Animate function
             const animate = () => {				
                 // Move model
-                if (!player.isShoot()) {
-                    updatePositionRotation(); // Update position and rotation only when not shooting
-                }
-                
-                // Shooting animation function
-                if (controls.getInput().shoot && !player.isShoot()) {
-                    // Initiate shooting animation
-                    player.shoot();
-                    previousShoot = true;
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
-                    
-                    let headingX = Math.sin(player.getRotation().y);
-                    let headingZ = Math.cos(player.getRotation().y);
-                    
-                    // Get objects that intersects with line of fire (where the player is facing)
-                    raycaster.set(new THREE.Vector3(player.getPosition().x, 1.1, player.getPosition().z), new THREE.Vector3(headingX, 0, headingZ).normalize());
-                    raycaster.near = 1;
-                    raycaster.far = 200;
-                    const intersects = raycaster.intersectObjects(this.scene.children);
+                updatePositionRotation(); // Update position and rotation only when not shooting
+                updateShoot(); // Update Shooting animation
+                updateTurret(); // Update turret
 
-                    // If there are objects in line of fire, send location to the socket
-                    if (intersects[0] != undefined) {
-                        this.socket.emit('hit', {x: intersects[0].point.x, y: intersects[0].point.y, z: intersects[0].point.z});
-                    }
-                }
-
-                // Send player model's data to socket if done shooting
-                if (previousShoot != player.isShoot()) {
-                    previousShoot = false;
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
-                }
                 player.update(); // Update player animation (for tracking shooting animation)
                 this.particleSystem.update(); // Update particle system
                 stats.update(); // Update stats
@@ -227,22 +269,63 @@ class Canvas {
                 if (controls.getInput().right) {
                     player.setRotation(undefined, player.getRotation().y - 0.02, undefined);
                 }
-                headingX = Math.sin(player.getRotation().y);
-                headingZ = Math.cos(player.getRotation().y);
+                headingX = Math.sin(player.getRotation().y + player.getTurretRotation());
+                headingZ = Math.cos(player.getRotation().y + player.getTurretRotation());
 
                 // Change camera position
-                if (controls.getInput().left || controls.getInput().right) {
+                if (controls.getInput().left || controls.getInput().right || controls.getInput().turretLeft || controls.getInput().turretRight) {
                     this.camera.position.set(player.getPosition().x + headingX * -6, 4, player.getPosition().z + headingZ * -6);
                     this.camera.lookAt(player.getPosition().x, player.getPosition().y, player.getPosition().z);
                 }
 
                 // Emit position and rotation info 
-                if (controls.getInput().forward || controls.getInput().backward || controls.getInput().left || controls.getInput().right) {
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), onShoot: player.isShoot()});
+                if (controls.getInput().forward || controls.getInput().backward || controls.getInput().left || controls.getInput().right || controls.getInput().turretLeft || controls.getInput().turretRight) {
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                }
+            }
+
+            // Shooting animation function
+            const updateShoot = () => {
+                if (controls.getInput().shoot && !player.isShoot()) {
+                    // Initiate shooting animation
+                    player.shoot();
+                    previousShoot = true;
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                    
+                    let headingX = Math.sin(player.getRotation().y + player.getTurretRotation());
+                    let headingZ = Math.cos(player.getRotation().y + player.getTurretRotation());
+                    
+                    // Get objects that intersects with line of fire (where the player is facing)
+                    raycaster.set(new THREE.Vector3(player.getPosition().x, 1.1, player.getPosition().z), new THREE.Vector3(headingX, 0, headingZ).normalize());
+                    raycaster.near = 1;
+                    raycaster.far = 200;
+                    const intersects = raycaster.intersectObjects(this.scene.children);
+
+                    // If there are objects in line of fire, send location to the socket
+                    if (intersects[0] != undefined) {
+                        this.socket.emit('hit', {x: intersects[0].point.x, y: intersects[0].point.y, z: intersects[0].point.z});
+                    }
+                }
+
+                // Send player model's data to socket if done shooting
+                if (previousShoot != player.isShoot()) {
+                    previousShoot = false;
+                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                }
+            }
+
+            const updateTurret = () => {
+                if (controls.getInput().turretLeft) {
+                    player.setTurretRotation(player.getTurretRotation() + 0.02);
+                }
+
+                if (controls.getInput().turretRight) {
+                    player.setTurretRotation(player.getTurretRotation() - 0.02);
                 }
             }
             animate();
         });
+        document.body.appendChild(renderer.domElement);
     }
 
     /**
@@ -256,9 +339,9 @@ class Canvas {
         this.players.set(id, 'Loading');
         new PLAYER().create(id).then((newPlayer) => {
             this.players.set(id, newPlayer);
-            this.scene.add(newPlayer.getModel());
             newPlayer.setPosition(position.x, position.y, position.z);
             newPlayer.setRotation(rotation.x, rotation.y, rotation.z);
+            this.scene.add(newPlayer.getModel());
         });
     }
 
@@ -284,6 +367,7 @@ class Canvas {
                 if (this.players.get(player[0]) != undefined && this.players.get(player[0]) != 'Loading') {
                     this.players.get(player[0]).setPosition(player[1].position.x, player[1].position.y, player[1].position.z);
                     this.players.get(player[0]).setRotation(player[1].rotation.x, player[1].rotation.y, player[1].rotation.z);
+                    this.players.get(player[0]).setTurretRotation(player[1].turretRotation);
                     
                     // Initiate shooting animation if they are shooting
                     if (!this.players.get(player[0]).isShoot() && player[1].onShoot) {
@@ -295,8 +379,6 @@ class Canvas {
             }
         });
     }
-
-    
 
     /**
      * Return socket ID

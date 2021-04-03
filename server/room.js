@@ -14,7 +14,10 @@ class Room {
      */
     addPlayer(playerSocket) {
         this.playerSockets.set(playerSocket.id, playerSocket);
-        this.players.set(playerSocket.id, {position: {x: 0, y: 0.82, z: 0}, rotation: {x: 0, y: 0, z: 0}, onShoot: false});
+        this.players.set(playerSocket.id, {position: {x: 0, y: 1.2, z: 0}, 
+                                           rotation: {x: 0, y: 0, z: 0},
+                                           turretRotation: 0,
+                                           onShoot: false});
     }
     
     /**
@@ -33,7 +36,7 @@ class Room {
      * @param {Object[]} data       // Stores player's position and rotation
      */
     updatePlayer(data) {
-        this.players.set(data.id, {position: data.position, rotation: data.rotation, onShoot: data.onShoot});
+        this.players.set(data.id, {position: data.position, rotation: data.rotation, turretRotation: data.turretRotation, onShoot: data.onShoot});
     }
 
     /**

@@ -9,7 +9,9 @@ class Control {
             backward: false,
             right: false,
             left: false,
-            shoot: false
+            shoot: false,
+            turretLeft: false,
+            turretRight: false
         }
     }
 
@@ -37,6 +39,14 @@ class Control {
             if (event.code == 'Space') {
                 this.input.shoot = true;
             }
+
+            if (event.code == 'KeyZ') {
+                this.input.turretLeft = true;
+            }
+
+            if (event.code == 'KeyX') {
+                this.input.turretRight = true;
+            }
         });
 
         $(document).keyup((event) => {
@@ -59,6 +69,14 @@ class Control {
             if (event.code == 'Space') {
                 this.input.shoot = false;
             }
+
+            if (event.code == 'KeyZ') {
+                this.input.turretLeft = false;
+            }
+
+            if (event.code == 'KeyX') {
+                this.input.turretRight = false;
+            }
         });
 
         $(window).blur(() => {
@@ -67,7 +85,10 @@ class Control {
             this.input.left = false;
             this.input.right = false;
             this.input.shoot = false;
+            this.input.turretLeft = false;
+            this.input.turretRight = false;
         });
+
     }
 
     /**

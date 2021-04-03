@@ -1,8 +1,8 @@
 /**
  * Process particles
  */
-onconnect = function(e) {
-    let port = e.ports[0];
+onconnect = function(event) {
+    let port = event.ports[0];
 
     port.onmessage = function(e) {
         const time = Date.now() * 0.005;
