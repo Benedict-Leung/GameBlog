@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <%- include('partials/defaultheader.ejs') %>
+    <script src='../js/create-account.js'></script>
   </head>
   <body>
     <section class="hero is-primary is-fullheight">
@@ -9,14 +10,15 @@
         <div class="container">
           <div class="columns is-centered">
             <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-              <form action="" class="box" id="login">
+              <form action="" class="box" id="create-account">
                 <div class="field">
                   <label for="" class="label">User Name</label>
                   <div class="control has-icons-left">
                     <input
-                      type="email"
-                      placeholder="e.g. bobsmith@gmail.com"
+                      type="text"
+                      placeholder="iamuser10"
                       class="input"
+                      id='username'
                       required
                     />
                     <span class="icon is-small is-left">
@@ -31,6 +33,7 @@
                       type="password"
                       placeholder="*******"
                       class="input"
+                      id='password'
                       required
                     />
                     <span class="icon is-small is-left">
@@ -42,7 +45,7 @@
                 <div class="file">
                   <label for="" class="label">Profile Picture</label>
                   <label class="file-label">
-                    <input class="file-input" type="file" name="resume" />
+                    <input class="file-input" type="file" name="profile-pic" id='profile-pic' required/>
                     <span class="file-cta">
                       <span class="file-icon">
                         <i class="fas fa-upload"></i>
@@ -62,3 +65,4 @@
     </section>
   </body>
 </html>
+
