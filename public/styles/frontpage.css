@@ -19,3 +19,18 @@ body {
 .description > .body {
     font-size: 16px;
 }
+
+.hidden{
+    display: none;
+}
+
+#user-info-name{
+    padding: 20px;
+    color: black;
+    font-size: 20px;
+    font-weight: bold; 
+}
+
+#user-info-image{
+    padding-right: 20px
+}

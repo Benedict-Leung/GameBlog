@@ -1,14 +1,22 @@
 var express = require('express');
 var app = express();
 var http = require('http');
+var cors = require('cors');
 var server = http.Server(app);
+var bodyParser = require('body-parser');
 
 app.use(express.static('public'));
 app.use(express.static('dist'));
+app.use(cors());
+
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use('/processParticles.js', express.static('server/processParticles.js'));
 
 const homePageRouter = require('./routes/home');
 const gamePageRouter = require('./routes/index');
+const userPageRouter = require('./routes/user');
 const sockets = require('./server/socketHandle.js');
 
 var path = require('path');
@@ -21,6 +29,7 @@ app.set("views", global.viewPath);
 //  Connect all our routes to our application
 app.use('/', gamePageRouter);
 app.use('/home', homePageRouter);
+app.use('/user', userPageRouter);
 
 app.set('port', 8000);
 server.listen(8000, function() {
