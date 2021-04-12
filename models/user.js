@@ -6,7 +6,7 @@ class User {
     _imageString;
     _blogs = [];
 
-    User(uuid=null, username, pass, imageString='', blogs=[]){
+    constructor(uuid=null, username, pass, imageString='', blogs=[]){
         this._uuid = uuid;
         this._username = username;
         this._pass = pass;
@@ -40,8 +40,19 @@ class User {
     }
 
     static fromJsonFactory(object){
-        return User(object.username, object.pass, object.imageString, object.blogs);
+        console.log(object.username);
+        if(!object.blogs){
+            object.blogs = [];
+        }
+        return createInstance(object);
     }
 
 }
+
+function createInstance(object){
+    const returnUser = new User(object._id, object.username, object.password, object.profilePic, object.blogs);
+    return returnUser;
+}
+
+module.exports = User;
 

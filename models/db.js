@@ -17,10 +17,9 @@ var DbConnection = function () {
         try {
             // connecting to the db
             let uri = "mongodb+srv://webDevFinalDBuser:eZynHiWNwzS81Drc@cluster0.jrs0s.mongodb.net/blog_db?retryWrites=true&w=majority";
-            let client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             
             // setting db instance for the singleton
-            let _db = await client.connect(url);
+            let _db = await MongoClient.connect(uri);
 
             return _db
         } catch (e) {
