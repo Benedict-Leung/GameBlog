@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+@font-face {
+    font-family: "GhostOutline";
+    src: url("../assets/fonts/GhostlikeDemoOutline.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "GhostRegular";
+    src: url("../assets/fonts/GhostlikeDemoRegular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "StarGaze";
+    src: url("../assets/fonts/Stargaze\ Stencil.woff") format("woff");
+}
+
+* {
+    font-family: "PT Sans Narrow";
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0; 
+    overflow: hidden;
+}
+
+.link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    right: 50%; 
+    position: fixed;
+    z-index: 2;
+    transform: translateX(50%);
+}
+
+.name {
+    color: #FFF;
+    font-size: 1.2rem;
+    padding: 2px;
+    background: rgba(0, 0, 0, .6);
+    user-select: none;
+}
+
+.health, .missingHealth {
+    height: 10px;
+    color: #FFF;
+    position: fixed;
+    top: 0;
+    margin: 0;
+    background: rgba(90, 245, 66, .6);
+    user-select: none;
+}
+
+.missingHealth {
+    right: 1px;
+    background: rgba(255, 72, 72, 0.6);
+}
+
+.reportBackground {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.reportContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.info {
+    font-family: "GhostRegular";
+    text-transform: uppercase;
+    user-select: none;
+}
+
+#notification {
+    font-size: 5rem;
+    position: relative;
+    background-color: #f3ec78;
+    background-image: linear-gradient(to bottom right, #af4261, #e40f1e);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+}
+
+#notification::before {
+    width: 105%;
+    height: 100%;
+    background: linear-gradient(#333, #eee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: absolute;
+    top: -0.2rem;
+    left: 0.2rem;
+    content: "You died!";
+    font-family: "GhostOutline";
+    z-index: -1;
+}
+
+#report {
+    font-family: "StarGaze";
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+}
+
+.respawn {
+    font-family: "StarGaze";
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    background-color: #42af71;
+    padding: 0.75rem 3rem 0.75rem 3rem;
+    margin: 5rem;
+    border-radius: 1.5rem;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.respawn:hover {
+    background-color: #3DA169;
+}
+
+.leaderboard, .leaderboard tr:not(:last-child) td {
+    text-align: left;
+    margin: 0;
+    border-bottom: 1px solid black;
+    border-collapse: collapse;
+}
+
+.leaderboard {
+    width: 20vw;
+    position: absolute;
+    background-color: rgba(227, 227, 227, 0.2);
+    font-size: 1.2rem;
+    top: 0;
+    right: 0;
+    margin: 1rem;
+    border-radius: 1rem;
+    border-bottom: none;
+    user-select: none;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 1rem;
+}
+
+.leaderboard th {
+    padding-bottom: 0;
+}
+
+.chat {
+    width: 20vw;
+    background-color: rgba(227, 227, 227, 0.2);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 1rem;
+    z-index: 11;
+}
+
+.chat input {
+    width: 100%;
+    font-size: 1rem;
+    background: transparent;
+    border: 1px solid black;
+    padding-left: 0.3rem;
+    border-radius: 0.3rem;
+    outline: none;
+}
+
+.messageContainer {
+    max-height: 10rem;
+    overflow-y: auto;
+}
+
+.messageContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messageContainer::-webkit-scrollbar-track {
+    background: rgba(227, 227, 227, 0.2); 
+}
+
+.messageContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 132, 132, 0.8);
+    opacity: 0.2;
+    border-radius: 1rem;
+}

@@ -1,5 +1,6 @@
-let FBXLoader = require('three/examples/jsm/loaders/FBXLoader.js');
-let THREE = require('three');
+let FBXLoader = require("three/examples/jsm/loaders/FBXLoader");
+let THREE = require("three");
+let CSS3DObject = require("three/examples/jsm/renderers/CSS3DRenderer");
 
 /**
  * Player class
@@ -7,7 +8,7 @@ let THREE = require('three');
 class Player {
     /**
      * 
-     * @param {*} id                            // Socket id
+     * @param {String} id                            // Socket id
      * @param {THREE.Mesh} model                // Mesh
      * @param {THREE.AnimationMixer} mixer      // Animation mixer
      * @param {THREE.Clock} clock               // Three.Clock
@@ -23,6 +24,9 @@ class Player {
         this.rotation = {x: 0, y: 0, z: 0};
         this.position = {x: 0, y: 1.2, z: 0};
         this.turretRotation = 0;
+        this.health = 150;
+        this.healthContainer = undefined;
+        this.name = undefined;
         
         if (this.model != undefined) {
             this.quaternionValues = [...this.model.animations[0].tracks[1].values];
@@ -35,11 +39,13 @@ class Player {
      * Create a player
      * 
      * @param {String} id       // Socket id
+     * @param {String} name     // Player's name
      */
-    async create(id) {
+    async create(id, name) {
         const loader = new FBXLoader.FBXLoader();
-        const model = await loader.loadAsync('./assets/tank.fbx');
+        const model = await loader.loadAsync("./assets/tank.fbx");
 
+        // Edit initial mesh geometry
         let mesh = model.children[1];
         mesh.castShadow = true;
         mesh.position.set(0, 1.2, 0);
@@ -55,22 +61,50 @@ class Player {
                 }
             }
         });
+        // Name label
+        const nameLabel = document.createElement("div");
+        nameLabel.className = "name";
+        nameLabel.textContent = name;
+
+        // Health label
+        const healthLabel = document.createElement("div");
+        healthLabel.className = "health";
+        healthLabel.style.width = this.health + "px";
+
+        // Missing health label
+        const missingHealthLabel = document.createElement("div");
+        missingHealthLabel.className = "missingHealth";
+        missingHealthLabel.style.width = (150 - this.health) + "px";
+
+        // Health container label
+        const containerLabel = document.createElement("div");
+        containerLabel.style.width = "150px";
+        containerLabel.style.height = "10px";
+        containerLabel.appendChild(healthLabel);
+        containerLabel.appendChild(missingHealthLabel);
 
         // Animation mixer
         let clock = new THREE.Clock();
         const mixer = new THREE.AnimationMixer(mesh);
         const action = mixer.clipAction(mesh.animations[0]);
         action.setLoop(THREE.LoopOnce);
-        console.log(mesh);
         let player = new Player(id, mesh, mixer, clock, action);
 
-        player.mixer.addEventListener('finished', () => {
+        player.mixer.addEventListener("finished", () => {
             player.action.stop();
             player.setPosition(player.position.x, player.position.y, player.position.z);
             player.setRotation(player.rotation.x, player.rotation.y, player.rotation.z);
             player.setTurretRotation(player.turretRotation);
             player.onShoot = false;
-        });       
+        });
+        player.name = new CSS3DObject.CSS3DObject(nameLabel);
+        player.name.position.set(0, 125, 0);
+        mesh.add(player.name);
+        
+        player.healthContainer = new CSS3DObject.CSS3DObject(containerLabel);
+        player.healthContainer.position.set(0, 100, 0 );
+        mesh.add(player.healthContainer); 
+
         return player;
     }
 
@@ -136,12 +170,12 @@ class Player {
     /**
      * Set player's turret rotation
      * 
-     * @param {Number} angle    // y rotation
+     * @param {Number} angle    // y rotation in Euler
      */
      setTurretRotation(angle) {
         this.turretRotation = angle;
         let q1 = new THREE.Quaternion(-0.06351142353437648, 0, 0, 0.9979811115851027);
-        let q2 = new THREE.Quaternion().setFromEuler( new THREE.Euler( 0, angle, 0, 'XYZ' ));
+        let q2 = new THREE.Quaternion().setFromEuler( new THREE.Euler( 0, angle, 0, "XYZ" ));
         q2.multiply(q1).normalize();
         this.model.children[4].quaternion.set(q2.x, q2.y, q2.z, q2.w);
         
@@ -166,13 +200,13 @@ class Player {
         // Change animation's quaternion rotation based on player's rotation
         for (var i = 0; i < quaternion.length; i += 4) {
             let q1 = new THREE.Quaternion(this.quaternionValues[i], this.quaternionValues[i + 1], this.quaternionValues[i + 2], this.quaternionValues[i + 3]);
-            let q2 = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, this.getRotation().y, 0, 'XYZ'));
+            let q2 = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, this.getRotation().y, 0, "XYZ"));
 
             let headingX = Math.sin(this.turretRotation);
             let headingZ = Math.cos(this.turretRotation);
             let xRotate = new THREE.Euler().setFromQuaternion(q1).x;
 
-            let q3 = new THREE.Quaternion().setFromEuler(new THREE.Euler(xRotate * headingZ, 0, xRotate * -headingX, 'XYZ'));
+            let q3 = new THREE.Quaternion().setFromEuler(new THREE.Euler(xRotate * headingZ, 0, xRotate * -headingX, "XYZ"));
             q2.multiply(q3).normalize();
             
             quaternion[i] = q2.x;
@@ -207,7 +241,7 @@ class Player {
 
         for (var i = 0; i < quaternion.length; i += 4) {
             let q1 = new THREE.Quaternion(this.turretValues[i], this.turretValues[i + 1], this.turretValues[i + 2], this.turretValues[i + 3]);
-            let q2 = new THREE.Quaternion().setFromEuler( new THREE.Euler( 0, this.turretRotation, 0, 'XYZ' ));
+            let q2 = new THREE.Quaternion().setFromEuler( new THREE.Euler( 0, this.turretRotation, 0, "XYZ" ));
             q2.multiply(q1).normalize();
             
             quaternion[i] = q2.x;
@@ -237,8 +271,28 @@ class Player {
         return this.rotation;
     }
 
+    // Return turret rotation
     getTurretRotation() {
         return this.turretRotation;
+    }
+
+    // Return player's health
+    getHealth() {
+        return this.health;
+    }
+
+    /**
+     * Set player's health
+     * 
+     * @param {Number} health   // Player's current health
+     */
+    setHealth(health) {
+        this.health = health;
+        let h = (health > 150) ? 150 : (health < 0) ? 0 : health;
+        if (this.model.children[12] != undefined) {
+            this.model.children[12].element.children[0].style.width = h + "px";
+            this.model.children[12].element.children[1].style.width = (150 - h) + "px";
+        }
     }
 
     // If in shooting animation

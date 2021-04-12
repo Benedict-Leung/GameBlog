@@ -1,8 +1,8 @@
-let THREE = require('three');
-let PLAYER = require('./player.js');
-let CONTROL = require('../public/js/control.js');
-let Stats = require('three/examples/jsm/libs/stats.module.js');
-let ParticleSystem = require('./particleSystem.js');
+let THREE = require("three");
+let PLAYER = require("./player.js");
+let CONTROL = require("../public/js/control.js");
+let CSS3DObject = require("three/examples/jsm/renderers/CSS3DRenderer");
+let ParticleSystem = require("./particleSystem.js");
 
 /**
  * Three.js Canvas
@@ -15,6 +15,7 @@ class Canvas {
      * @param {THREE.Scene} scene           // Three.js scene
      * @param {THREE.Camera} camera         // Three.js camera
      * @param {THREE.SpotLight} spotLight   // Three.js spotlight
+     * @param {Map} players                 // Other players present
      */
     constructor(id, socket, scene, camera, spotLight, players) {
         this.id = id;
@@ -22,15 +23,18 @@ class Canvas {
         this.scene = scene;
         this.camera = camera;
         this.spotLight = spotLight;
+        this.player = undefined;
         this.players = players;   // Stores all players position and rotation
         this.particleSystem = null;
+        this.controls = new CONTROL();
     }
 
     /**
      * Setup three.js canvas
      * 
-     * @param {String} id 
-     * @param {Socket} socket 
+     * @param {String} id           // Client's socket id
+     * @param {Socket} socket       // Client's socket
+     * @param {Map} playersInfo     // Client's player
      */
     async create(id, socket, playersInfo) {
         // Scene
@@ -67,8 +71,8 @@ class Canvas {
         scene.add(hemiLight);
         
         // Dome
-        const vertexShader = document.getElementById('skyvertexShader').textContent;
-        const fragmentShader = document.getElementById('skyfragmentShader').textContent;
+        const vertexShader = document.getElementById("skyvertexShader").textContent;
+        const fragmentShader = document.getElementById("skyfragmentShader").textContent;
         const uniforms = {
             "topColor": {value: new THREE.Color(0x0077ff) },
             "bottomColor": {value: new THREE.Color().setHSL(0.095, 1, 0.75)},
@@ -174,7 +178,7 @@ class Canvas {
 
         for (var i = 0; i < playersInfo.length; i++) {
             if (playersInfo[i][0] != id) {
-                new PLAYER().create(playersInfo[i][0]).then((player) => {
+                new PLAYER().create(playersInfo[i][0], playersInfo[i][1].name).then((player) => {
                     players.set(player.getID(), player);
                     scene.add(player.getModel());
                 });
@@ -186,8 +190,10 @@ class Canvas {
 
     /**
      * Shows the canvas and start the animation
+     * 
+     * @param name  // Client's name
      */
-    init() {
+    init(name) {
         // WebGL renderer
         const renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -196,11 +202,18 @@ class Canvas {
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         
+        // CSS3D renderer
+        const labelRenderer = new CSS3DObject.CSS3DRenderer();
+        labelRenderer.setSize( window.innerWidth, window.innerHeight );
+        labelRenderer.domElement.style.position = "absolute";
+        labelRenderer.domElement.style.top = "0px";
+        
         // Change aspect ratio when window changes size
-        window.addEventListener('resize', () => {
+        window.addEventListener("resize", () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
         
         // Custom Particle System
@@ -212,16 +225,10 @@ class Canvas {
         const raycaster = new THREE.Raycaster();
 
         // Create player and controls for the user
-        new PLAYER().create(this.id).then((player) => {
-            let controls = new CONTROL();
+        new PLAYER().create(this.id, name).then((player) => {
+            this.player = player;
             let previousShoot = false;
-            controls.create();
-            this.scene.add(player.getModel());    
-            
-            // Stats
-            var stats = new Stats.default();
-            document.body.appendChild(stats.dom);
-            stats.begin();
+            this.scene.add(player.getModel());
             
             // Animate function
             const animate = () => {				
@@ -232,9 +239,9 @@ class Canvas {
 
                 player.update(); // Update player animation (for tracking shooting animation)
                 this.particleSystem.update(); // Update particle system
-                stats.update(); // Update stats
 
                 renderer.render(this.scene, this.camera);
+                labelRenderer.render(this.scene, this.camera);
                 requestAnimationFrame(animate);
             };
 
@@ -244,53 +251,53 @@ class Canvas {
                 let headingZ = Math.cos(player.getRotation().y);
 
                 // Move forward
-                if (controls.getInput().forward) {
+                if (this.controls.getInput().forward) {
                     player.setPosition(player.getPosition().x + headingX * 0.1, undefined, player.getPosition().z + headingZ * 0.1);
                     this.camera.position.set(this.camera.position.x + headingX * 0.1, 4, this.camera.position.z + headingZ * 0.1);
                 }
 
                 // Move backward
-                if (controls.getInput().backward) {
+                if (this.controls.getInput().backward) {
                     player.setPosition(player.getPosition().x - headingX * 0.1, undefined, player.getPosition().z - headingZ * 0.1);
                     this.camera.position.set(this.camera.position.x - headingX * 0.1, 4, this.camera.position.z - headingZ * 0.1);
                 }
 
                 // Change spotlight target
-                if (controls.getInput().forward || controls.getInput().backward) {
+                if (this.controls.getInput().forward || this.controls.getInput().backward) {
                     this.spotLight.target.position.set(player.getPosition().x, player.getPosition().y, player.getPosition().z);
                 }
 
                 // Rotate left
-                if (controls.getInput().left) {
+                if (this.controls.getInput().left) {
                     player.setRotation(undefined, player.getRotation().y + 0.02, undefined);
                 }
 
                 // Rotate right
-                if (controls.getInput().right) {
+                if (this.controls.getInput().right) {
                     player.setRotation(undefined, player.getRotation().y - 0.02, undefined);
                 }
                 headingX = Math.sin(player.getRotation().y + player.getTurretRotation());
                 headingZ = Math.cos(player.getRotation().y + player.getTurretRotation());
 
                 // Change camera position
-                if (controls.getInput().left || controls.getInput().right || controls.getInput().turretLeft || controls.getInput().turretRight) {
+                if (this.controls.getInput().left || this.controls.getInput().right || this.controls.getInput().turretLeft || this.controls.getInput().turretRight) {
                     this.camera.position.set(player.getPosition().x + headingX * -6, 4, player.getPosition().z + headingZ * -6);
                     this.camera.lookAt(player.getPosition().x, player.getPosition().y, player.getPosition().z);
                 }
 
                 // Emit position and rotation info 
-                if (controls.getInput().forward || controls.getInput().backward || controls.getInput().left || controls.getInput().right || controls.getInput().turretLeft || controls.getInput().turretRight) {
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                if (this.controls.getInput().forward || this.controls.getInput().backward || this.controls.getInput().left || this.controls.getInput().right || this.controls.getInput().turretLeft || this.controls.getInput().turretRight) {
+                    this.socket.emit("input", {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), health: player.getHealth(), onShoot: player.isShoot()});
                 }
             }
 
             // Shooting animation function
             const updateShoot = () => {
-                if (controls.getInput().shoot && !player.isShoot()) {
+                if (this.controls.getInput().shoot && !player.isShoot()) {
                     // Initiate shooting animation
                     player.shoot();
                     previousShoot = true;
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                    this.socket.emit("input", {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), health: player.getHealth(), onShoot: player.isShoot()});
                     
                     let headingX = Math.sin(player.getRotation().y + player.getTurretRotation());
                     let headingZ = Math.cos(player.getRotation().y + player.getTurretRotation());
@@ -302,42 +309,57 @@ class Canvas {
                     const intersects = raycaster.intersectObjects(this.scene.children);
 
                     // If there are objects in line of fire, send location to the socket
-                    if (intersects[0] != undefined) {
-                        this.socket.emit('hit', {x: intersects[0].point.x, y: intersects[0].point.y, z: intersects[0].point.z});
+                    if (intersects.length > 0) {
+                        for (let intersect of intersects) {
+                            if (intersect.object.type == "Mesh") {
+                                this.socket.emit("hit", {x: intersects[0].point.x, y: intersects[0].point.y, z: intersects[0].point.z});
+    
+                                for (let [id, p] of this.players.entries()) {
+                                    if (intersect.object.uuid == p.model.uuid) {
+                                        this.socket.emit("hitPlayer", [this.id, id]);
+                                    }
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
-
-                // Send player model's data to socket if done shooting
+                // Send player model"s data to socket if done shooting
                 if (previousShoot != player.isShoot()) {
                     previousShoot = false;
-                    this.socket.emit('input', {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), onShoot: player.isShoot()});
+                    this.socket.emit("input", {id: this.id, position: player.getPosition(), rotation: player.getRotation(), turretRotation: player.getTurretRotation(), health: player.getHealth(), onShoot: player.isShoot()});
                 }
             }
-
+            // Update turret function
             const updateTurret = () => {
-                if (controls.getInput().turretLeft) {
+                if (this.controls.getInput().turretLeft) {
                     player.setTurretRotation(player.getTurretRotation() + 0.02);
                 }
 
-                if (controls.getInput().turretRight) {
+                if (this.controls.getInput().turretRight) {
                     player.setTurretRotation(player.getTurretRotation() - 0.02);
                 }
             }
+            this.controls.create();
+            document.body.appendChild(renderer.domElement);
+            document.body.appendChild(labelRenderer.domElement);
+            this.initChat();
+
             animate();
         });
-        document.body.appendChild(renderer.domElement);
     }
 
     /**
-     * Added player when another user has joined the server
+     * Add player when another user has joined the server
      * 
      * @param {String} id           // Socket id
+     * @param {String} name         // Player's name
      * @param {Number} position     // Player's position
      * @param {Number} rotation     // Player's rotation
      */
-    async addPlayer(id, position, rotation) {
-        this.players.set(id, 'Loading');
-        new PLAYER().create(id).then((newPlayer) => {
+    addPlayer(id, name, position, rotation) {
+        this.players.set(id, "Loading");
+        new PLAYER().create(id, name).then((newPlayer) => {
             this.players.set(id, newPlayer);
             newPlayer.setPosition(position.x, position.y, position.z);
             newPlayer.setRotation(rotation.x, rotation.y, rotation.z);
@@ -351,10 +373,98 @@ class Canvas {
      * @param {String} id       // Socket id
      */
     removePlayer(id) {
+        this.players.get(id).model.remove(this.players.get(id).healthContainer);
+        this.players.get(id).model.remove(this.players.get(id).name);
         this.scene.remove(this.players.get(id).getModel());
         this.players.delete(id);
     }
 
+    /**
+     * Respawn the player
+     * 
+     * @param {String} id       // Player's id
+     */
+    respawnPlayer(id) {
+        this.players.get(id).getModel().add(this.players.get(id).name);
+        this.players.get(id).getModel().add(this.players.get(id).healthContainer);
+        this.scene.add(this.players.get(id).getModel());
+    }
+
+    /**
+     * Respawn the user
+     */
+    respawn() {
+        // Reset the user and randomly place the user
+        this.player.setTurretRotation(0);
+        this.player.setPosition(Math.random() * 100 - 49, undefined, Math.random() * 100 - 49);
+
+        let headingX = Math.sin(this.player.getRotation().y + this.player.getTurretRotation());
+        let headingZ = Math.cos(this.player.getRotation().y + this.player.getTurretRotation());
+        this.camera.position.set(this.player.getPosition().x + headingX * -6, 4, this.player.getPosition().z + headingZ * -6);
+        this.camera.lookAt(this.player.getPosition().x, this.player.getPosition().y, this.player.getPosition().z);
+        this.controls.create();
+
+        this.socket.emit("input", {id: this.id, position: this.player.getPosition(), rotation: this.player.getRotation(), health: 150, turretRotation: this.player.getTurretRotation(), onShoot: false});
+        this.socket.emit("respawn", this.id);
+        
+        this.player.model.add(this.player.name);
+        this.player.model.add(this.player.healthContainer);
+        this.scene.add(this.player.model);
+
+        $(".reportBackground").remove();
+    }
+
+    /**
+     * Display report
+     * 
+     * @param {String} player    // Player's name
+     */
+    displayReport(player) {
+        $("body").append(`<div class='reportBackground'>
+                                <div class='reportContainer'><label class='info' id='notification'>You died!</label>
+                                    <label class='info' id='report'>Killed by ${player}</label>
+                                    <button class='respawn'>Respawn</button>
+                                </div>
+                            </div>`);
+        $(".respawn").click(() => {
+            this.respawn();
+        })
+    }
+
+    /**
+     * Initializes key events to chat
+     */
+    initChat() {
+        $(document).keyup((event) => {
+            if (event.code == "Enter") {
+                // Check if message input exists
+                if ($(".chat input").length == 0) {
+                    $(".chat").append("<input></input>");
+                    $(".chat input").focus();
+                    this.controls.disable();
+                    
+                    // Send message if enter key has presses
+                    $(".chat input").keyup((e) => {
+                        if (e.code == "Enter") {
+                            if ($(".chat input").val() != "") {
+                                this.socket.emit("message", [this.id, $(".chat input").val()]);
+                            }
+                            this.controls.create();
+                            $(".chat input").remove();
+                            setTimeout(() => this.initChat(), 100);
+                        }
+                    });
+
+                    $(".chat input").blur((e) => {
+                        this.controls.create();
+                        $(".chat input").remove();
+                        this.initChat();
+                    })
+                }
+            }
+        });
+    }
+    
     /**
      * Update the canvas
      * 
@@ -364,16 +474,44 @@ class Canvas {
         data.forEach(player => {
             if (player[0] != this.id) {
                 // Set the location of the players
-                if (this.players.get(player[0]) != undefined && this.players.get(player[0]) != 'Loading') {
-                    this.players.get(player[0]).setPosition(player[1].position.x, player[1].position.y, player[1].position.z);
-                    this.players.get(player[0]).setRotation(player[1].rotation.x, player[1].rotation.y, player[1].rotation.z);
-                    this.players.get(player[0]).setTurretRotation(player[1].turretRotation);
+                if (this.players.get(player[0]) != undefined && this.players.get(player[0]) != "Loading") {
+                    this.players.get(player[0]).setHealth(player[1].health);
                     
-                    // Initiate shooting animation if they are shooting
-                    if (!this.players.get(player[0]).isShoot() && player[1].onShoot) {
-                        this.players.get(player[0]).shoot();
+                    // Change player's model if health is above zero. Otherwise remove from scene
+                    if (this.players.get(player[0]).getHealth() > 0){
+                        this.players.get(player[0]).setPosition(player[1].position.x, player[1].position.y, player[1].position.z);
+                        this.players.get(player[0]).setRotation(player[1].rotation.x, player[1].rotation.y, player[1].rotation.z);
+                        this.players.get(player[0]).setTurretRotation(player[1].turretRotation);
+
+                        // Initiate shooting animation if they are shooting
+                        if (!this.players.get(player[0]).isShoot() && player[1].onShoot) {
+                            this.players.get(player[0]).shoot();
+                        } else {
+                            this.players.get(player[0]).update();
+                        }
+                        // Change name tag and health to looak at the client
+                        this.players.get(player[0]).name.lookAt(this.camera.position);
+                        this.players.get(player[0]).healthContainer.lookAt(this.camera.position);
                     } else {
-                        this.players.get(player[0]).update();
+                        // Remove player fomr scene
+                        this.players.get(player[0]).model.remove(this.players.get(player[0]).healthContainer);
+                        this.players.get(player[0]).model.remove(this.players.get(player[0]).name);
+                        this.scene.remove(this.players.get(player[0]).model);
+                    }
+                }
+            } else {
+                if (this.player != undefined) {
+                    // If client's health is 0, display report. Otherwise update health
+                    if (player[1].health == 0 && this.player.getHealth() != -1) {
+                        this.player.setHealth(-1);
+                        this.player.model.remove(this.player.healthContainer);
+                        this.player.model.remove(this.player.name);
+                        this.scene.remove(this.player.model);
+                        this.controls.disable();
+                    } else if (player[1].health > 0) {
+                        this.player.setHealth(player[1].health);
+                        this.player.name.lookAt(this.camera.position);
+                        this.player.healthContainer.lookAt(this.camera.position);
                     }
                 }
             }

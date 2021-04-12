@@ -2,20 +2,28 @@
 <html lang="en">
 	<head>
 		<title>GameBlog</title>
-		<style>
-			body { margin: 0; overflow: hidden;}
-        </style>
+		<link rel="stylesheet" href="styles/index.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
         <script src="index.bundle.js"></script>
         <script src="shared.bundle.js"></script>
-        <script src="977.bundle.js"></script>
 	</head>
 	<body>
+        <div style="position: fixed">Made with <a href="https://threejs.org" target="_blank">three.js</a></div>
+        <div class="link">
+            <div>Tank model is from <a href="https://sketchfab.com/3d-models/red-tank-348e44deabc944ceb1d758ea7cbe26fd" target="_blank">here</a>
+                 , Textures are from <a href="https://3dtextures.me/" target="_blank">here</a>
+            </div>
+            <div>Move - WASD or Arrow Keys</div>
+            <div>Turret - Z and C or Comma and Period</div>
+            <div>Fire - Space</div>
+            <div>Chat - Enter</div>
+        </div>
+        <!-- All shaders grabbed from three.js examples https://threejs.org/examples/ -->
         <script type="x-shader/x-vertex" id="skyvertexShader">
 			varying vec3 vWorldPosition;
 
 			void main() {
-
 				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
 				vWorldPosition = worldPosition.xyz;
 
@@ -33,7 +41,6 @@
 			varying vec3 vWorldPosition;
 
 			void main() {
-
 				float h = normalize( vWorldPosition + offset ).y;
 				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
 			}
@@ -52,7 +59,6 @@
 		</script>
 
 		<script type="x-shader/x-fragment" id="fragmentshader">
-
 			uniform sampler2D pointTexture;
 			varying vec3 vColor;
 
@@ -60,10 +66,12 @@
 				gl_FragColor = vec4(vColor, 1.0);
                 if (texture2D(pointTexture, gl_PointCoord ).a < 0.1) discard;
 
-
 				gl_FragColor = gl_FragColor * texture2D(pointTexture, gl_PointCoord);
 			}
-
 		</script>
+        <div class="chat">
+            <div class="messageContainer">
+            </div>
+        </div>
 	</body>
 </html>
