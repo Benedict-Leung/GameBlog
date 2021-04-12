@@ -5,7 +5,7 @@ var homeController = require('../controllers/home');
 
 router.get('/', homeController.home);
 router.get('/login', homeController.login);
-// router.post('/login', homeController.loginPost);
+router.get('/process-login', homeController.loginProcess);
 router.get('/signup', homeController.signup);
 router.post('/signup', homeController.signupPost);
 

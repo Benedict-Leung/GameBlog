@@ -13,6 +13,15 @@ exports.login = function(request, response) {
     response.render('login');
 };
 
+exports.loginProcess = function(request, response) {
+    const username = request.query.username;
+    const password = request.query.password;
+    const model = new UserModel();
+    model.getUsersByUserNameAndPassword(username, password).then((res) => {
+        response.send(res);
+    });
+};
+
 exports.signup = function(request, response) {
     response.render('createaccount');
 };

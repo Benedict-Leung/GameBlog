@@ -1,3 +1,4 @@
+var md5 = require('md5');
 
 class User {
     _uuid;
@@ -16,6 +17,14 @@ class User {
 
     getUuid(){
         return this._uuid;
+    }
+
+    getPassword(){
+        return this._pass;
+    }
+
+    encodePass(){
+       this._pass = md5(this._pass); 
     }
 
     getUserName(){

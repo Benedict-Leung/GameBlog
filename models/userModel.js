@@ -1,5 +1,6 @@
 const DB = require('./db');
 const mongo = require('mongodb');
+var md5 = require('md5');
 
 class UserModel {
 
@@ -21,19 +22,20 @@ class UserModel {
         });
     }
 
-    getUsersByUserName(username){
-        let search = {'name': username};
+    getUsersByUserNameAndPassword(username, password){
+        let search = {'username': username, password: md5(password)};
+        console.log(search);
 
         return new Promise((reslove, reject) => {
 
             DB.Get().then((db) => {
-                let collection = db.db('blogs_db').collection('users');
+                let collection = db.db('blog_db').collection('users');
 
-                collection.find(search).toArray((err, result) => {
+                collection.findOne(search, (err, result) => {
                     if(err){
                         reject(err);
                     }
-                    reslove(result);
+                    reslove(result._id);
                 });
             });
         });
@@ -57,10 +59,9 @@ class UserModel {
 
     insertUser(user){
         return new Promise((reslove, reject) => {
-            console.log(user.toJson());
+            user.encodePass();
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('users');
-
                 collection.insertOne(user.toJson(), (err, result) => {
                     if(err){
                         reject(err);

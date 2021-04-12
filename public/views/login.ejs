@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <%- include('partials/defaultheader.ejs') %>
+    <script src='../js/login.js'></script>
   </head>
   <body>
     <section class="hero is-primary is-fullheight">
@@ -11,12 +12,13 @@
             <div class="column is-5-tablet is-4-desktop is-3-widescreen">
               <form action="" class="box" id="login">
                 <div class="field">
-                  <label for="" class="label">Email</label>
+                  <label for="" class="label">Username</label>
                   <div class="control has-icons-left">
                     <input
-                      type="email"
+                      type="text"
                       placeholder="e.g. bobsmith@gmail.com"
                       class="input"
+                      id='username'
                       required
                     />
                     <span class="icon is-small is-left">
@@ -31,18 +33,13 @@
                       type="password"
                       placeholder="*******"
                       class="input"
+                      id='password'
                       required
                     />
                     <span class="icon is-small is-left">
                       <i class="fa fa-lock"></i>
                     </span>
                   </div>
-                </div>
-                <div class="field">
-                  <label for="" class="checkbox">
-                    <input type="checkbox" />
-                    Remember me
-                  </label>
                 </div>
                 <div class="field">
                   <button class="button is-success">Login</button>
