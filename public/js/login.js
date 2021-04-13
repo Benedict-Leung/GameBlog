@@ -2,6 +2,7 @@ $(document).ready((e) => {
 
     $('#login').submit((e) => {
         e.preventDefault();
+        $('.error').hide();
         const username = $('#username').val();
         const pass = $('#password').val();
 
@@ -18,6 +19,14 @@ $(document).ready((e) => {
 });
 
 function loginSuccess(data){
-    localStorage.setItem('uuid', data);
-    window.location.href = 'http://localhost:8000/home';
+    if(!data.id){
+        $('.error').show();
+        $('.error').text(data.res);
+    }else{
+        localStorage.setItem('uuid', data.id);
+        localStorage.setItem('username', data.username);
+        window.location.href = 'http://localhost:8000/home';
+    }
+
+
 }

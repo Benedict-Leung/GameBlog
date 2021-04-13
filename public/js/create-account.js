@@ -45,6 +45,7 @@ $(document).ready((e) => {
 
 function createAccountSuccess(data) {
     console.log(data);
-    localStorage.setItem('uuid', data);
+    localStorage.setItem('uuid', data.id);
+    localStorage.setItem('username', data.username);
     window.location.href = 'http://localhost:8000/home';
 }

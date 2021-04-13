@@ -35,7 +35,17 @@ class UserModel {
                     if(err){
                         reject(err);
                     }
-                    reslove(result._id);
+                    if(result){
+                        if(result._id){
+                            reslove({'id': result._id, 'username': result.username});
+                        } else {
+                            reslove({res: "User not found"});
+                        }
+                    }else{
+                        reslove({res: "User not found"});
+                    }
+                    
+                    
                 });
             });
         });
@@ -66,8 +76,8 @@ class UserModel {
                     if(err){
                         reject(err);
                     }
-                    // console.log(result);
-                    reslove(result.insertedId);
+                    console.log(result);
+                    reslove({'id':result.insertedId, 'username':user.getUserName()});
                 });
             })
         });

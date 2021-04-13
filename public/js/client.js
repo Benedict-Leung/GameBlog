@@ -1,4 +1,7 @@
+myStorage = window.localStorage;
+
 $(document).ready(function () {
+
     const CANVAS = require("../../server/canvas.js");
     const LEADERBOARD = require("../../server/leaderboard.js");
     const io = require("socket.io-client");
@@ -7,14 +10,16 @@ $(document).ready(function () {
     let leaderboard = new LEADERBOARD();
     var socket = io();
 
-    // Get room info when connected
+     // Get room info when connected
     socket.on("connect", function() {        
         socket.emit("getRoom", "");
     });
 
     // Create canvas
     socket.on("create", function(data) {
-        let username = "User " + Math.floor(Math.random() * 100);
+        const usernameStorage = localStorage.getItem('username');
+        const username =  usernameStorage != null ? usernameStorage : "User " + Math.floor(Math.random() * 100);
+        console.log(localStorage.getItem('username'));
         new CANVAS().create(socket.id, socket, data).then((c) => {
             canvas = c;
             c.init(username);
@@ -65,4 +70,5 @@ $(document).ready(function () {
     socket.on("leaderboard", (data) => {
         leaderboard.update(data);
     });
+
 });

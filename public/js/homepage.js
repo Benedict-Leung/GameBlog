@@ -20,7 +20,7 @@ $(document).ready((e) => {
 
     $('#logout').click((e) => {
         e.preventDefault();
-        localStorage.removeItem('uuid');
+        localStorage.clear();
         window.location.reload();
     })
 });

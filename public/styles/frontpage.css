@@ -34,3 +34,7 @@ body {
 #user-info-image{
     padding-right: 20px
 }
+
+.error{
+    color: rgb(170, 54, 54);
+}
