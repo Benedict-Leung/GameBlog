@@ -7,27 +7,25 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
 </head>
 <body class="has-background-dark">
-    
-
     <!-- Start Hero Carousel -->
     <section class="hero is-medium has-carousel">
         <div id="carousel-demo" class="hero-carousel">
             <div class="item-1 has-text-centered">
-                <img src="../images/Slide1.png" alt="GameBlog"></img>
+                <img src="../images/slide1.png" alt="GameBlog"></img>
             </div>
             <div class="item-2 has-text-centered">
-                <img src="../images/Slide2.png" alt="GameBlog"></img>
+                <img src="../images/slide2.png" alt="GameBlog"></img>
             </div>
             <div class="item-3 has-text-centered">
-                <img src="../images/Slide3.png" alt="GameBlog"></img>
+                <img src="../images/slide3.png" alt="GameBlog"></img>
             </div>
             <div class="item-4 has-text-centered">
-                <img src="../images/Slide4.png" alt="GameBlog"></img>
+                <img src="../images/slide4.png" alt="GameBlog"></img>
             </div>
             </div>
         </div>
         <div class="hero-head has-text-centered">
-            <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+            <nav class="navbar is-success is-fixed-top" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a class="navbar-item" href="/home">
                         <img src="../images/logo.png" width="100" height="100" alt="GameBlog"/>
@@ -42,7 +40,7 @@
         
                 <div class="navbar-menu" id="navbarMenu" >
                     <div class="navbar-start">
-                        <a class="navbar-item" href="/">Play Game</a>
+                        <a class="navbar-item" href="/game">Play Game</a>
                         <a class="navbar-item" href="/blog">Visit Blog</a>
                     </div>
         
@@ -50,7 +48,7 @@
                         <div class="navbar-item">
                             <div class="buttons" id='user-info'>
                                 <span class='logged-in-content' id='user-info-name' style='display: none;'></span>
-                                <img height='110' width="110" class='logged-in-content' id='user-info-image' style="display: none;"></img>
+                                <img height='110' width="110" class='logged-in-content' id='user-info-image' style="display: none;" alt=""></img>
                                 <a id='logout' class="button is-info logged-in-content" style="display: none;">Logout</a>
                                 <a id='login' class="button is-info logged-out-content" href='/home/login'>Sign in</a>
                                 <a id='create' class="button is-warning logged-out-content" href='/home/signup'>Create Account</a>
@@ -79,25 +77,38 @@
 
     <section class="description section block has-background-success">
         <div class="content is-large"><h2>About Game</h2></div>
-        <div class="columns">
-            <div class="column is-one-third">
+        <div class="columns is-multiline">
+            <div class="column is-one-third is-flex">
                 <div class="content notification is-success is-light">
                     <h3 class="title">Three.js</h3>
                     <p>Made with three.js. Three.js is a JavaScript library used to create and display animated 3D graphics using WebGL.
-                       The game uses a tank model and textures </p>
+                       The game uses a <a href="https://sketchfab.com/3d-models/red-tank-348e44deabc944ceb1d758ea7cbe26fd" target="_blank">3D tank model</a>
+                       and <a href="https://3dtextures.me/" target="_blank">textures</a> to make the game. Two renderers, from Three.js, was used for the game. One for health bars and nametags (CSS3DRenderer) and the other to display 3D models (WebGLRenderer).</p>
                     <img src="../images/threejs.png" alt="">
                 </div>
             </div>
             <div class="column is-one-third">
                 <div class="content notification is-success is-light">
                     <h3 class="title">Socket.io</h3>
-                    <p>Placeholder</p>
+                    <p>Socket.io was used to make the game multiplayer and made it possible to interact with other users.</p>
+                    <img src="../images/chat.png" alt="">
+                </div>
+                <div class="content notification is-success is-light">
+                    <h3 class="title">D3.js</h3>
+                    <p>The game has a leaderboard to display the top 5 scores and uses D3.js to make the leaderboard.</p>
+                    <img src="../images/leaderboard.png" alt="">
                 </div>
             </div>
             <div class="column is-one-third">
                 <div class="content notification is-success is-light">
-                    <h3 class="title">D3.js</h3>
-                    <p>Placeholder</p>
+                    <h3 class="title">Web Workers</h3>
+                    <p>The game has its own simple particle system that uses web workers to process each particle.</p>
+                    <img src="../images/particle.png" alt="">
+                </div>
+                <div class="content notification is-success is-light">
+                    <h3 class="title">MongoDB</h3>
+                    <p>When logging in, the web page uses MongoDB to take user info for the game. If not logged in, the game generates a random username</p> 
+                    <img src="../images/name.png" alt="">
                 </div>
             </div>
         </div>

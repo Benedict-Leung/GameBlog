@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/processParticles.js', express.static('server/processParticles.js'));
 
 const homePageRouter = require('./routes/home');
-const gamePageRouter = require('./routes/index');
+const gamePageRouter = require('./routes/game');
 const userPageRouter = require('./routes/user');
 const sockets = require('./server/socketHandle.js');
 
@@ -27,7 +27,8 @@ app.set('view engine', 'ejs');
 app.set("views", global.viewPath);
 
 //  Connect all our routes to our application
-app.use('/', gamePageRouter);
+app.use('/game', gamePageRouter);
+app.use('/', homePageRouter);
 app.use('/home', homePageRouter);
 app.use('/user', userPageRouter);
 

@@ -18,7 +18,7 @@ $(document).ready(function () {
     // Create canvas
     socket.on("create", function(data) {
         const usernameStorage = localStorage.getItem('username');
-        const username =  usernameStorage != null ? usernameStorage : "User " + Math.floor(Math.random() * 100);
+        const username =  usernameStorage != null ? usernameStorage : "User " + Math.floor(Math.random() * 10000);
         console.log(localStorage.getItem('username'));
         new CANVAS().create(socket.id, socket, data).then((c) => {
             canvas = c;
