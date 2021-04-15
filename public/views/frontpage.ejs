@@ -2,50 +2,109 @@
 <html lang="en">
 <head>
 <%- include('partials/defaultheader.ejs') %>
+
 <script src='../js/homepage.js'></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
 </head>
-<body>
-    <nav class="navbar is-success" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/home">
-                <img src="../images/logo.png" width="100" height="100" alt="GameBlog"/>
-            </a>
+<body class="has-background-dark">
     
-            <a class="navbar-burger burger" role="button" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
 
-        <div class="navbar-menu" id="navbarMenu" >
-            <div class="navbar-start">
-                <a class="navbar-item" href="/">Play Game</a>
-                <a class="navbar-item" href="/blog">Visit Blog</a>
+    <!-- Start Hero Carousel -->
+    <section class="hero is-medium has-carousel">
+        <div id="carousel-demo" class="hero-carousel">
+            <div class="item-1 has-text-centered">
+                <img src="../images/Slide1.png" alt="GameBlog"></img>
             </div>
-
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons" id='user-info'>
-                        <span class='logged-in-content' id='user-info-name' style='display: none;'></span>
-                        <img height='110' width="auto" class='logged-in-content' id='user-info-image' style="display: none;"></img>
-                        <a id='logout' class="button is-info logged-in-content" style="display: none;">Logout</a>
-                        <a id='login' class="button is-info logged-out-content" href='/home/login'>Sign in</a>
-                        <a id='create' class="button is-warning logged-out-content" href='/home/signup'>Create Account</a>
+            <div class="item-2 has-text-centered">
+                <img src="../images/Slide2.png" alt="GameBlog"></img>
+            </div>
+            <div class="item-3 has-text-centered">
+                <img src="../images/Slide3.png" alt="GameBlog"></img>
+            </div>
+            <div class="item-4 has-text-centered">
+                <img src="../images/Slide4.png" alt="GameBlog"></img>
+            </div>
+            </div>
+        </div>
+        <div class="hero-head has-text-centered">
+            <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="/home">
+                        <img src="../images/logo.png" width="100" height="100" alt="GameBlog"/>
+                    </a>
+            
+                    <a class="navbar-burger burger" role="button" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+        
+                <div class="navbar-menu" id="navbarMenu" >
+                    <div class="navbar-start">
+                        <a class="navbar-item" href="/">Play Game</a>
+                        <a class="navbar-item" href="/blog">Visit Blog</a>
                     </div>
+        
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons" id='user-info'>
+                                <span class='logged-in-content' id='user-info-name' style='display: none;'></span>
+                                <img height='110' width="110" class='logged-in-content' id='user-info-image' style="display: none;"></img>
+                                <a id='logout' class="button is-info logged-in-content" style="display: none;">Logout</a>
+                                <a id='login' class="button is-info logged-out-content" href='/home/login'>Sign in</a>
+                                <a id='create' class="button is-warning logged-out-content" href='/home/signup'>Create Account</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="hero-body has-text-centered"><img src="../images/logo.png" alt="GameBlog"></img></div>
+    </section>
+    <!-- End Hero Carousel -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+    <script>
+        bulmaCarousel.attach('#carousel-demo', {
+            slidesToScroll: 1,
+            slidesToShow: 1,
+            loop: true,
+            effect: "fade",
+            autoplay: true,
+            duration: 700,
+            autoplaySpeed: 5000
+        });
+    </script>
+
+    <section class="description section block has-background-success">
+        <div class="content is-large"><h2>About Game</h2></div>
+        <div class="columns">
+            <div class="column is-one-third">
+                <div class="content notification is-success is-light">
+                    <h3 class="title">Three.js</h3>
+                    <p>Made with three.js. Three.js is a JavaScript library used to create and display animated 3D graphics using WebGL.
+                       The game uses a tank model and textures </p>
+                    <img src="../images/threejs.png" alt="">
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="content notification is-success is-light">
+                    <h3 class="title">Socket.io</h3>
+                    <p>Placeholder</p>
+                </div>
+            </div>
+            <div class="column is-one-third">
+                <div class="content notification is-success is-light">
+                    <h3 class="title">D3.js</h3>
+                    <p>Placeholder</p>
                 </div>
             </div>
         </div>
-    </nav>
-
-    <img src="../images/logo.png" alt="GameBlog" class="logo">
-
-    <section class="description">
-        <div class="title">About GameBlog</div>
-        <div class="body">
+        <div class="content is-large"><h2>About GameBlog</h2></div>
+        <div class="body block">
           <p>GameBlog is a site that allows for users to play a game while also providing a place for discussion. Players can share their experiences with the game alongside interacting with it.</p>
         </div>
     </section>
-
 </body>
 </html>

@@ -1,4 +1,4 @@
-myStorage = window.localStorage;
+let myStorage = window.localStorage;
 
 $(document).ready(function () {
 

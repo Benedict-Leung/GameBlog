@@ -1,5 +1,14 @@
+* {
+    outline: none;
+}
+
+html {
+    overflow-y: auto;
+}
+
 body {
     background-color: grey;
+    height: 100vh;
 }
 
 .logo {
@@ -25,14 +34,16 @@ body {
 }
 
 #user-info-name{
-    padding: 20px;
+    padding-right: 20px;
     color: black;
     font-size: 20px;
     font-weight: bold; 
+    margin-bottom: 0.5rem;
 }
 
 #user-info-image{
-    padding-right: 20px
+    padding-right: 20px;
+    margin-bottom: 0.5rem;
 }
 
 .error{
