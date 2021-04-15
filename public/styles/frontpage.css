@@ -4,11 +4,12 @@
 
 html {
     overflow-y: auto;
+    height: 100%;
+    
 }
 
 body {
-    background-color: grey;
-    height: 100vh;
+    padding-bottom: 1px;
 }
 
 .logo {
@@ -21,12 +22,9 @@ body {
     height: 90px;
 }
 
-.description > .title {
-    font-size: 25px;
-}
-
-.description > .body {
-    font-size: 16px;
+.description {
+    border-radius: 1rem;
+    margin: 1rem;   
 }
 
 .hidden{
