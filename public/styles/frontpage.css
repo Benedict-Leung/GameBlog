@@ -12,6 +12,10 @@ body {
     padding-bottom: 1px;
 }
 
+.buttons {
+    justify-content: center;
+}
+
 .logo {
     display: block;
     margin-top: 50px;

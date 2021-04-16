@@ -1,4 +1,4 @@
-myStorage = window.localStorage;
+let myStorage = window.localStorage;
 
 $(document).ready((e) => {
   $("#create-account").submit((e) => {
