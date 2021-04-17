@@ -421,14 +421,14 @@ class Canvas {
      */
     displayReport(player) {
         $("body").append(`<div class='reportBackground'>
-                                <div class='reportContainer'><label class='info' id='notification'>You died!</label>
-                                    <label class='info' id='report'>Killed by ${player}</label>
-                                    <button class='respawn'>Respawn</button>
-                                </div>
-                            </div>`);
+                              <div class='reportContainer'><label class='info' id='notification'>You died!</label>
+                                  <label class='info' id='report'>Killed by ${player}</label>
+                                  <button class='respawn'>Respawn</button>
+                              </div>
+                          </div>`);
         $(".respawn").click(() => {
             this.respawn();
-        })
+        });
     }
 
     /**
@@ -449,14 +449,19 @@ class Canvas {
                             if ($(".chat input").val() != "") {
                                 this.socket.emit("message", [this.id, $(".chat input").val()]);
                             }
-                            this.controls.create();
+                            
+                            if (this.player.health >= 0) {
+                                this.controls.create();
+                            }
                             $(".chat input").remove();
                             setTimeout(() => this.initChat(), 100);
                         }
                     });
 
                     $(".chat input").blur((e) => {
-                        this.controls.create();
+                        if (this.player.health >= 0) {
+                            this.controls.create();
+                        }
                         $(".chat input").remove();
                         this.initChat();
                     })
@@ -508,6 +513,7 @@ class Canvas {
                         this.player.model.remove(this.player.name);
                         this.scene.remove(this.player.model);
                         this.controls.disable();
+                        this.initChat();
                     } else if (player[1].health > 0) {
                         this.player.setHealth(player[1].health);
                         this.player.name.lookAt(this.camera.position);

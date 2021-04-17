@@ -104,6 +104,13 @@ class Control {
     disable() {
         $(document).unbind("keydown");
         $(document).unbind("keyup");
+        this.input.forward = false;
+        this.input.backward = false;
+        this.input.left = false;
+        this.input.right = false;
+        this.input.shoot = false;
+        this.input.turretLeft = false;
+        this.input.turretRight = false;
     }
 }
 
