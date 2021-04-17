@@ -22,7 +22,7 @@ class Room {
                                             turretRotation: 0,
                                             health: 150,
                                             onShoot: false});
-        this.scores.set(name, 0);
+        this.scores.set(playerSocket.id, 0);
         this.updateScores();
     }
     
@@ -32,7 +32,7 @@ class Room {
      * @param {Socket} playerSocket      // Player's socket
      */
     removePlayer(playerSocket) {
-        this.scores.delete(this.players.get(playerSocket.id).name);
+        this.scores.delete(playerSocket.id);
         this.playerSockets.delete(playerSocket.id);
         this.players.delete(playerSocket.id);
         this.updateScores();
@@ -64,7 +64,7 @@ class Room {
 
         // If player's health is zero, display report and add score to attacker
         if (this.players.get(data[1]).health == 0) {
-            this.scores.set(this.players.get(data[0]).name, this.scores.get(this.players.get(data[0]).name) + 1);
+            this.scores.set(data[0], this.scores.get(data[0]) + 1);
 
             this.playerSockets.get(data[1]).emit("displayReport", this.players.get(data[0]).name);
             this.updateScores();
@@ -113,7 +113,19 @@ class Room {
      */
     updateScores() {
         this.playerSockets.forEach((socket, id) => {
-            socket.emit("leaderboard", Array.from(this.scores));
+            let scores = new Map([...this.scores.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5));
+            scores = Array.from(scores);
+            let rank = 1;
+
+            for (let score of scores) {
+                let player = this.players.get(score[0]);
+
+                if (player != undefined) 
+                    score[0] = player.name;
+                score.unshift(rank)
+                rank += 1;
+            }
+            socket.emit("leaderboard", scores);
         });
     }
 
