@@ -17,6 +17,7 @@ app.use('/processParticles.js', express.static('server/processParticles.js'));
 const homePageRouter = require('./routes/home');
 const gamePageRouter = require('./routes/game');
 const userPageRouter = require('./routes/user');
+const blogPageRouter = require('./routes/blog');
 const sockets = require('./server/socketHandle.js');
 
 var path = require('path');
@@ -31,6 +32,7 @@ app.use('/game', gamePageRouter);
 app.use('/', homePageRouter);
 app.use('/home', homePageRouter);
 app.use('/user', userPageRouter);
+app.use('/blog', blogPageRouter);
 
 app.set('port', 8000);
 server.listen(8000, function() {
