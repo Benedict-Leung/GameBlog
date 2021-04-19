@@ -29,6 +29,8 @@ exports.display = function (request, response) {
 
     model.getBlogById(request.params.id).then((data) => {
         response.render('post', { post: data });
+    }).catch(() => {
+        response.redirect("/blog");
     });
 }
 

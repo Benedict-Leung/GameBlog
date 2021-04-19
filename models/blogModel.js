@@ -5,10 +5,10 @@ const Blog = require('./blog');
 class BlogModel {
 
     getBlogById(blogId){
-        var o_id = new mongo.ObjectID(blogId)
-        let search = {'_id': o_id};
         return new Promise((resolve, reject) => {
-
+            var o_id = new mongo.ObjectID(blogId)
+            let search = {'_id': o_id};
+            
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
 

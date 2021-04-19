@@ -34,6 +34,10 @@ app.use('/home', homePageRouter);
 app.use('/user', userPageRouter);
 app.use('/blog', blogPageRouter);
 
+app.get('*', function (req, res, next) {
+    res.render("error")
+});
+
 app.set('port', 8000);
 server.listen(8000, function() {
     console.log('Starting server on port 8000');
