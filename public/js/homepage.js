@@ -44,21 +44,6 @@ $(document).ready((e) => {
             });
         });
     }
-
-    bulmaCarousel.attach('#carousel-demo', {
-        slidesToScroll: 1,
-        slidesToShow: 1,
-        loop: true,
-        effect: "fade",
-        autoplay: true,
-        duration: 700,
-        autoplaySpeed: 5000
-    });
-
-    $(window).resize(() => {
-        $("#carousel-demo .slider-item").css("width", window.innerWidth);
-        $("#carousel-demo .slider-container").css("height", "auto");
-    })
 });
 
 function loginSuccess(data){

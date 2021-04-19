@@ -19,9 +19,15 @@ exports.createBlog = function(request, response) {
 
     if (blog != undefined) {
         model.insertBlog(blog).then((res) => {
-            model.getAllBlogs().then((data) => {
-                response.render('blog', { posts: data });
-            })
+            response.redirect("/blog");
         });
     }
+}
+
+exports.display = function (request, response) {
+    const model = new BlogModel();
+
+    model.getBlogById(request.params.id).then((data) => {
+        response.render('post', { post: data });
+    });
 }

@@ -31,6 +31,22 @@
         <div class="hero-body has-text-centered"><img src="../images/logo.png" alt="GameBlog"></img></div>
     </section>
     <!-- End Hero Carousel -->
+    <script>
+        bulmaCarousel.attach('#carousel-demo', {
+        slidesToScroll: 1,
+        slidesToShow: 1,
+        loop: true,
+        effect: "fade",
+        autoplay: true,
+        duration: 700,
+        autoplaySpeed: 5000
+    });
+
+    $(window).resize(() => {
+        $("#carousel-demo .slider-item").css("width", window.innerWidth);
+        $("#carousel-demo .slider-container").css("height", "auto");
+    });
+    </script>
 
     <section class="description section block has-background-success">
         <div class="content is-large"><h2>About Game</h2></div>
