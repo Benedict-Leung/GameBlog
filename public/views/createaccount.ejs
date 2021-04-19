@@ -3,13 +3,14 @@
   <head>
     <%- include('partials/defaultheader.ejs') %>
     <script src='../js/create-account.js'></script>
+    <link rel="stylesheet" href="../../styles/create-account.css" type="text/css">
   </head>
   <body>
     <section class="hero is-primary is-fullheight">
       <div class="hero-body">
         <div class="container">
           <div class="columns is-centered">
-            <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+            <div class="column is-5-tablet is-4-desktop is-5-widescreen">
               <form action="" class="box" id="create-account">
                 <div class="field">
                   <label for="" class="label">User Name</label>
@@ -45,7 +46,7 @@
                 <div class="file">
                   <label for="" class="label">Profile Picture</label>
                   <label class="file-label">
-                    <input class="file-input" type="file" name="profile-pic" id='profile-pic' required/>
+                    <input class="file-input" type="file" name="profile-pic" id='profile-pic' accept="image/*" onchange="showPreviewImage(this)" value="" required/>
                     <span class="file-cta">
                       <span class="file-icon">
                         <i class="fas fa-upload"></i>
@@ -53,6 +54,9 @@
                       <span class="file-label"> Choose a file… </span>
                     </span>
                   </label>
+                </div>
+                <div class="field">
+                  <img id="preview" src="" alt="image-preview-here" />
                 </div>
                 <div class="field">
                   <button class="button is-success">Login</button>
