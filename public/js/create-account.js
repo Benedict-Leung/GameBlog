@@ -17,8 +17,6 @@ $(document).ready((e) => {
       const username = $("#username").val();
       const pass = $("#password").val();
 
-      console.log(username, pass);
-
       fetch(`http://localhost:8000/home/signup`, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -64,7 +62,6 @@ function showPreviewImage(fileInput) {
 }
 
 function createAccountSuccess(data) {
-    console.log(data);
     localStorage.setItem('uuid', data.id);
     localStorage.setItem('username', data.username);
     window.location.href = 'http://localhost:8000/home';

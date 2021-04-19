@@ -14,7 +14,6 @@ function init(server) {
     io.on("connection", function(socket) {
         // Add player to room
         socket.on("join", function (data) {
-            console.log("Connected");
             room.addPlayer(socket, data);
             io.sockets.emit("message", `${data} has joined the game.`);
             socket.broadcast.emit("addPlayer", {id: socket.id, name: data});
@@ -53,7 +52,6 @@ function init(server) {
         // Remove player from room
         socket.on("disconnect", function (data) {
             room.removePlayer(socket);
-            console.log("Disconnected");
             io.sockets.emit("remove", socket.id);
         });
     });

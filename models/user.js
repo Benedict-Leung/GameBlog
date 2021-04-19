@@ -49,7 +49,6 @@ class User {
     }
 
     static fromJsonFactory(object){
-        console.log(object.username);
         if(!object.blogs){
             object.blogs = [];
         }

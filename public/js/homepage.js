@@ -47,7 +47,6 @@ $(document).ready((e) => {
 });
 
 function loginSuccess(data){
-    console.log(data);
     $('#user-info-name').text(data.username);
     $('#user-info-image').attr('src', 'data:image/png; base64,' + data.imageString)
 

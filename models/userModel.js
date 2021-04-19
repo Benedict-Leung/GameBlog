@@ -24,7 +24,6 @@ class UserModel {
 
     getUsersByUserNameAndPassword(username, password){
         let search = {'username': username, password: md5(password)};
-        console.log(search);
 
         return new Promise((reslove, reject) => {
 
@@ -76,7 +75,6 @@ class UserModel {
                     if(err){
                         reject(err);
                     }
-                    console.log(result);
                     reslove({'id':result.insertedId, 'username':user.getUserName()});
                 });
             })
