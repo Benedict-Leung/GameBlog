@@ -5,7 +5,7 @@ exports.displayBlogs = function(request, response) {
     // example usage of model
     const model = new BlogModel();
     model.getAllBlogs().then((data) => {
-        response.render('blog', { posts: data });
+        response.render('blog', { posts: data.reverse() });
     }); 
 }
 
