@@ -1,0 +1,14 @@
+.container {
+    padding-top: 3.25rem;
+}
+
+.card {
+    margin-bottom: 0.5rem;
+    border: 3px solid transparent;
+}
+
+.card:hover {
+    box-sizing: border-box;
+    border-color: #48c774;
+    cursor: pointer;
+}

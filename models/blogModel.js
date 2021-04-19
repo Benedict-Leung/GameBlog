@@ -69,7 +69,6 @@ class BlogModel {
 
     insertBlog(blog){
         return new Promise((reslove, reject) => {
-            user.encodePass();
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
                 collection.insertOne(blog.toJson(), (err, result) => {
