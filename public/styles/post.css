@@ -6,6 +6,10 @@
     padding-top: 3.25rem;
 }
 
+.section {
+    width: 100%;
+}
+
 .card {
     border: 3px solid transparent;
 }

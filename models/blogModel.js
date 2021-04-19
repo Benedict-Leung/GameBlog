@@ -7,7 +7,7 @@ class BlogModel {
     getBlogById(blogId){
         var o_id = new mongo.ObjectID(blogId)
         let search = {'_id': o_id};
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
 
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
@@ -16,7 +16,7 @@ class BlogModel {
                     if(err){
                         reject(err);
                     }
-                    reslove(doc);
+                    resolve(doc);
                 });
             });
         });
@@ -24,7 +24,7 @@ class BlogModel {
 
     getBlogByUuid(uuid){
         let search = {'uuid': uuid};
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
 
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
@@ -35,22 +35,20 @@ class BlogModel {
                     }
                     if(result){
                         if(result._id){
-                            reslove({'id': result._id, 'username': result.username});
+                            resolve({'id': result._id, 'username': result.username});
                         } else {
-                            reslove({res: "User not found"});
+                            resolve({res: "User not found"});
                         }
                     }else{
-                        reslove({res: "User not found"});
-                    }
-                    
-                    
+                        resolve({res: "User not found"});
+                    }                    
                 });
             });
         });
     }
 
     getAllBlogs(){
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
 
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
@@ -59,30 +57,43 @@ class BlogModel {
                     if(err){
                         reject(err);
                     }
-                    reslove(result);
+                    resolve(result);
                 });
             }).catch(e => {
-                reslove(e);
+                resolve(e);
             });
         });
     }
 
     insertBlog(blog){
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('blogs');
                 collection.insertOne(blog.toJson(), (err, result) => {
                     if(err){
                         reject(err);
                     }
-                    reslove({'id':result.insertedId });
+                    resolve({'id':result.insertedId });
                 });
             })
         });
     }
 
-    updateBlog(blogId){
+    addComment(blogId, username, comment) {
+        return new Promise((resolve, reject) => {
+            DB.Get().then((db) => {
+                let collection = db.db('blog_db').collection('blogs');
+                let query = {_id: new mongo.ObjectID(blogId)}
+                let newComment = {$push: {comments: {username: username, comment: comment}}};
 
+                collection.updateOne(query, newComment, (err, result) => {
+                    if(err){
+                        reject(err);
+                    }
+                    resolve(result);
+                });
+            })
+        });
     }
 }
 

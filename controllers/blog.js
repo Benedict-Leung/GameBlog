@@ -31,3 +31,10 @@ exports.display = function (request, response) {
         response.render('post', { post: data });
     });
 }
+
+exports.addComment = function (request, response) {
+    const model = new BlogModel();
+    model.addComment(request.body.id, request.body.username, request.body.comment).then((data) => {
+        response.send(data);
+    });
+}

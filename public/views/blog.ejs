@@ -13,19 +13,25 @@
             <a href="/blog/new" class="button is-success">New Post</a>    
         </section>
         
-        <% posts.forEach(post => { %>
-            <div class="card is-4">
-                <a href="/blog/<%= post._id %>" >
-                    <div class="card-content">
-                        <h4 class="title is-4"><%= post.title %></h4>
-                        <div class="subtitle">
-                            <%= post.date.toLocaleDateString() %>
+        <% if (posts.length != 0) { %>
+            <% posts.forEach(post => { %>
+                <div class="card is-4">
+                    <a href="/blog/<%= post._id %>" >
+                        <div class="card-content">
+                            <h4 class="title is-4"><%= post.title %></h4>
+                            <div class="subtitle">
+                                <%= post.date.toLocaleDateString() %>
+                            </div>
+                            <div class="content"><%= post.description %></div>
                         </div>
-                        <div class="content"><%= post.description %></div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="notification">
+                <h4 class="title is-4">No Posts</h4>
             </div>
-        <% }) %>    
+        <% } %>
     </div>
 </body>
 </html>

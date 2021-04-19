@@ -3,20 +3,39 @@
 <head>
     <%- include('partials/defaultheader.ejs') %>
     <script src='../js/homepage.js'></script>
-    <link rel="stylesheet" href="styles/post.css" type="text/css">
+    <script src='../js/post.js'></script>
+    <link rel="stylesheet" href="../styles/post.css" type="text/css">
 </head>
 <body class="has-background-dark">
     <%- include('partials/navbar.ejs') %>
     <div class="container section">
         <section class="section">
-            <div class="card is-4">
-                <h1 class="title is-4"><%= post.title %></h1>
-                <div class="subtitle"><%= post.date.toLocaleDateString() %></div>
-                <p><strong><%= post.description %></strong></p>
-                <p><%= post.text %></p>
-            </div>
-            <div class="control">
+            <div class="control block">
                 <a href="/blog" class="button is-danger">Go Back</a>
+            </div>
+            <div class="card block is-4">
+                <div class="card-content">
+                    <h1 class="title is-4"><%= post.title %></h1>
+                    <div class="subtitle"><%= post.date.toLocaleDateString() %></div>
+                    <p><%= post.text %></p>
+                </div>
+            </div>
+            <div class="card block is-4">
+                <div class="card-content comment-content">
+                    <div class="content title is-4 input comment">Log in to leave a comment</div>
+                    <h1 class="title is-4">Comments</h1>
+                    <% if (post.comments.length != 0) { %>
+                        <% post.comments.forEach(comment => { %>
+                            <div class="content">
+                                <p><strong><%= comment.username %></strong></p>
+                                <p><%= comment.comment %></p>
+                            </div>
+                            
+                        <% }) %>
+                    <% } else { %>
+                        <div class="subtitle has-text-centered">No Comments</div>
+                    <% } %>
+                </div>
             </div>
         </section>
     </div>
