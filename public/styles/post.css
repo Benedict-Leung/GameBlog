@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    width: 60%;
+    padding-top: 3.25rem;
+}
+
+.card {
+    border: 3px solid transparent;
+}

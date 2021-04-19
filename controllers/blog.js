@@ -25,5 +25,9 @@ exports.createBlog = function(request, response) {
 }
 
 exports.display = function (request, response) {
-    //Implement display
+    const model = new BlogModel();
+
+    model.getBlogById(request.params.id).then((data) => {
+        response.render('post', { post: data });
+    });
 }

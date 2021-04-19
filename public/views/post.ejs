@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/defaultheader.ejs') %>
+    <script src='../js/homepage.js'></script>
+    <link rel="stylesheet" href="styles/post.css" type="text/css">
+</head>
+<body class="has-background-dark">
+    <%- include('partials/navbar.ejs') %>
+    <div class="container section">
+        <section class="section">
+            <div class="card is-4">
+                <h1 class="title is-4"><%= post.title %></h1>
+                <div class="subtitle"><%= post.date.toLocaleDateString() %></div>
+                <p><strong><%= post.description %></strong></p>
+                <p><%= post.text %></p>
+            </div>
+            <div class="control">
+                <a href="/blog" class="button is-danger">Go Back</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
