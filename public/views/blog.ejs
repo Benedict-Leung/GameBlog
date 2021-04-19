@@ -15,14 +15,15 @@
         
         <% posts.forEach(post => { %>
             <div class="card is-4">
-                <div class="card-content">
-                    <h4 class="title is-4"><%= post.title %></h4>
-                    <div class="subtitle">
-                        <%= post.date.toLocaleDateString() %>
+                <a href="/blog/<%= post._id %>" >
+                    <div class="card-content">
+                        <h4 class="title is-4"><%= post.title %></h4>
+                        <div class="subtitle">
+                            <%= post.date.toLocaleDateString() %>
+                        </div>
+                        <div class="content"><%= post.description %></div>
                     </div>
-                    <div class="content hidden"><%= post.text %></div>
-                    <div class="content"><%= post.description %></div>
-                </div>
+                </a>
             </div>
         <% }) %>    
     </div>

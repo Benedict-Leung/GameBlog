@@ -6,5 +6,6 @@ var blogController = require('../controllers/blog');
 router.get('/', blogController.displayBlogs)
 router.get('/new', blogController.newBlog)
 router.post('/new', blogController.createBlog)
+router.get('/:id', blogController.display)
 
 module.exports = router;

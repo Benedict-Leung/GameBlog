@@ -8,7 +8,9 @@
 }
 
 .card:hover {
-    box-sizing: border-box;
     border-color: #48c774;
-    cursor: pointer;
+}
+
+.card a {
+    color: #4a4a4a;
 }

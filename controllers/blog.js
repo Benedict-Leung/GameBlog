@@ -19,9 +19,11 @@ exports.createBlog = function(request, response) {
 
     if (blog != undefined) {
         model.insertBlog(blog).then((res) => {
-            model.getAllBlogs().then((data) => {
-                response.render('blog', { posts: data });
-            })
+            response.redirect("/blog");
         });
     }
+}
+
+exports.display = function (request, response) {
+    //Implement display
 }
