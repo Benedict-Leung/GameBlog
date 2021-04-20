@@ -1,0 +1,26 @@
+body {
+    height: 100%;
+}
+
+svg {
+    width: 100%;
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.wave1 {
+    height: 15%;
+    z-index: 3;
+}
+
+.wave2 {
+    height: 20%;
+    z-index: 2;
+}
+
+.wave3 {
+    height: 25%;
+    z-index: 1;
+}

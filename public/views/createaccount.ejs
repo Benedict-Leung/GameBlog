@@ -2,8 +2,12 @@
 <html lang="en">
   <head>
     <%- include('partials/defaultheader.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TweenMax.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/85188/jquery.wavify.js"></script>
     <script src='../js/create-account.js'></script>
+    <script src='../js/wave.js'></script>
     <link rel="stylesheet" href="../../styles/create-account.css" type="text/css">
+    <link rel="stylesheet" href="../../styles/wave.css" type="text/css">
   </head>
   <body>
     <section class="hero is-primary is-fullheight">
@@ -67,6 +71,9 @@
         </div>
       </div>
     </section>
+    <svg class = "wave1"><path id="wave1" d=""/></svg>
+    <svg class = "wave2"><path id="wave2" d=""/></svg>
+    <svg class = "wave3"><path id="wave3" d=""/></svg>
   </body>
 </html>
 
