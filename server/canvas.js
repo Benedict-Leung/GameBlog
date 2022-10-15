@@ -252,14 +252,14 @@ class Canvas {
 
                 // Move forward
                 if (this.controls.getInput().forward) {
-                    player.setPosition(player.getPosition().x + headingX * 0.1, undefined, player.getPosition().z + headingZ * 0.1);
-                    this.camera.position.set(this.camera.position.x + headingX * 0.1, 4, this.camera.position.z + headingZ * 0.1);
+                    player.setPosition(player.getPosition().x + headingX * 0.05, undefined, player.getPosition().z + headingZ * 0.05);
+                    this.camera.position.set(this.camera.position.x + headingX * 0.05, 4, this.camera.position.z + headingZ * 0.05);
                 }
 
                 // Move backward
                 if (this.controls.getInput().backward) {
-                    player.setPosition(player.getPosition().x - headingX * 0.1, undefined, player.getPosition().z - headingZ * 0.1);
-                    this.camera.position.set(this.camera.position.x - headingX * 0.1, 4, this.camera.position.z - headingZ * 0.1);
+                    player.setPosition(player.getPosition().x - headingX * 0.05, undefined, player.getPosition().z - headingZ * 0.05);
+                    this.camera.position.set(this.camera.position.x - headingX * 0.05, 4, this.camera.position.z - headingZ * 0.05);
                 }
 
                 // Change spotlight target
@@ -269,12 +269,12 @@ class Canvas {
 
                 // Rotate left
                 if (this.controls.getInput().left) {
-                    player.setRotation(undefined, player.getRotation().y + 0.02, undefined);
+                    player.setRotation(undefined, player.getRotation().y + 0.01, undefined);
                 }
 
                 // Rotate right
                 if (this.controls.getInput().right) {
-                    player.setRotation(undefined, player.getRotation().y - 0.02, undefined);
+                    player.setRotation(undefined, player.getRotation().y - 0.01, undefined);
                 }
                 headingX = Math.sin(player.getRotation().y + player.getTurretRotation());
                 headingZ = Math.cos(player.getRotation().y + player.getTurretRotation());
@@ -333,11 +333,11 @@ class Canvas {
             // Update turret function
             const updateTurret = () => {
                 if (this.controls.getInput().turretLeft) {
-                    player.setTurretRotation(player.getTurretRotation() + 0.02);
+                    player.setTurretRotation(player.getTurretRotation() + 0.01);
                 }
 
                 if (this.controls.getInput().turretRight) {
-                    player.setTurretRotation(player.getTurretRotation() - 0.02);
+                    player.setTurretRotation(player.getTurretRotation() - 0.01);
                 }
             }
             this.controls.create();

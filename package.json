@@ -1,7 +1,6 @@
 {
   "name": "majorgroupproject-the-a-team",
   "version": "1.0.0",
-  "description": "Before you submit your project, modify the following table to include everyone's full name and GitHub usernames:",
   "main": "app.js",
   "dependencies": {
     "ejs": "^3.1.6",

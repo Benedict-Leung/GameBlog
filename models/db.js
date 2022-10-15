@@ -16,7 +16,7 @@ var DbConnection = function () {
     async function DbConnect() {
         try {
             // connecting to the db
-            let uri = "mongodb+srv://webDevFinalDBuser:eZynHiWNwzS81Drc@cluster0.jrs0s.mongodb.net/blog_db?retryWrites=true&w=majority";
+            let uri = "mongodb+srv://admin:7oIdkzlU1JIN3Un6@cluster0.enxjlim.mongodb.net/?retryWrites=true&w=majority";
             
             // setting db instance for the singleton
             let _db = await MongoClient.connect(uri);

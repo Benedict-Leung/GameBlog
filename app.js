@@ -3,7 +3,7 @@ var app = express();
 var http = require('http');
 var cors = require('cors');
 var server = http.Server(app);
-var bodyParser = require('body-parser');
+var port = process.env.PORT || 8000;
 
 app.use(express.static('public'));
 app.use(express.static('dist'));
@@ -38,9 +38,9 @@ app.get('*', function (req, res, next) {
     res.render("error")
 });
 
-app.set('port', 8000);
-server.listen(8000, function() {
-    console.log('Starting server on port 8000');
+app.set('port', port);
+server.listen(port, function() {
+    console.log('Starting server on port ' + port);
 });
 
 sockets.init(server);
