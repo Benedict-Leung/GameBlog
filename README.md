@@ -1,9 +1,3 @@
-# GameBlog
-  Homepage: https://game-blog.azurewebsites.net/home
-  
-  Game: https://game-blog.azurewebsites.net/game
-  
-  Blog: https://game-blog.azurewebsites.net/blog
 ## About
 A simple blog that contains information about the game. The game is a free-for-all game where you shoot other players for points.
 
