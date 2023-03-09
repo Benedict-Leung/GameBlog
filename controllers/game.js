@@ -1,3 +1,3 @@
-exports.index = function(request, response) {
+exports.index = function(_, response) {
     response.sendFile(appRoot + '/public/game.html');
 };

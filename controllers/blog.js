@@ -1,15 +1,18 @@
 const Blog = require('../models/blog');
 const BlogModel = require('../models/blogModel');
 
-exports.displayBlogs = function(request, response) {
+exports.displayBlogs = function(_, response) {
     // example usage of model
     const model = new BlogModel();
     model.getAllBlogs().then((data) => {
         response.render('blog', { posts: data.reverse() });
+    }).catch((err) => {
+        console.log(err)
+        response.render('blog', { posts: [] });
     }); 
 }
 
-exports.newBlog = function(request, response) {
+exports.newBlog = function(_, response) {
     response.render('partials/newpost');
 }
 

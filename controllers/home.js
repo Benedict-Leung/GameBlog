@@ -1,14 +1,11 @@
-const { fromJsonFactory } = require('../models/user');
 const User = require('../models/user');
 const UserModel = require('../models/userModel');
 
-
-
-exports.home = function(request, response) {
+exports.home = function(_, response) {
     response.render('frontpage');
 };
 
-exports.login = function(request, response) {
+exports.login = function(_, response) {
     response.render('login');
 };
 
@@ -21,7 +18,7 @@ exports.loginProcess = function(request, response) {
     });
 };
 
-exports.signup = function(request, response) {
+exports.signup = function(_, response) {
     response.render('createaccount');
 };
 

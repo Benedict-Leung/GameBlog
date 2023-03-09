@@ -34,8 +34,8 @@ app.use('/home', homePageRouter);
 app.use('/user', userPageRouter);
 app.use('/blog', blogPageRouter);
 
-app.get('*', function (req, res, next) {
-    res.render("error")
+app.get('*', function (_, res, _) {
+    res.render("error");
 });
 
 app.set('port', port);

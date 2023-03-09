@@ -1,5 +1,4 @@
 class Blog {
-
     constructor(title, date, description, text, comments, uuid=null, blogid=null){
         this._title = title;
         this._date = date;
@@ -10,7 +9,7 @@ class Blog {
         this._blogid = blogid;
     }
 
-    toJson(){
+    toJson() {
         return{
             'title': this._title,
             'date' : this._date,
@@ -20,12 +19,11 @@ class Blog {
         }
     }
 
-    static fromJsonFactory(object){
+    static fromJsonFactory(object) {
         if (object.date == undefined)
             object.date = new Date();
         return createInstance(object);
     }
-
 }
 
 function createInstance(object){

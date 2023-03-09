@@ -3,20 +3,19 @@ const mongo = require('mongodb');
 var md5 = require('md5');
 
 class UserModel {
-
     getUserById(uuid){
-        var o_id = new mongo.ObjectID(uuid)
+        var o_id = new mongo.ObjectId(uuid)
         let search = {'_id': o_id};
-        return new Promise((reslove, reject) => {
 
+        return new Promise((resolve, reject) => {
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('users');
 
-                collection.findOne(search, (err, doc) => {
-                    if(err){
-                        reject(err);
-                    }
-                    reslove(doc);
+                collection.findOne(search)
+                .then(result => {
+                    resolve(result);
+                }).catch(e => {
+                    reject(e);
                 });
             });
         });
@@ -25,42 +24,39 @@ class UserModel {
     getUsersByUserNameAndPassword(username, password){
         let search = {'username': username, password: md5(password)};
 
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
 
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('users');
 
-                collection.findOne(search, (err, result) => {
-                    if(err){
-                        reject(err);
-                    }
-                    if(result){
-                        if(result._id){
-                            reslove({'id': result._id, 'username': result.username});
+                collection.findOne(search)
+                .then(result => {
+                    if (result) {
+                        if (result._id) {
+                            resolve({'id': result._id, 'username': result.username});
                         } else {
-                            reslove({res: "User not found"});
+                            resolve({res: "User not found"});
                         }
-                    }else{
-                        reslove({res: "User not found"});
+                    } else {
+                        resolve({res: "User not found"});
                     }
-                    
-                    
+                }).catch(e => {
+                    reject(e);
                 });
             });
         });
     }
 
     getAllUsers(){
-        return new Promise((reslove, reject) => {
+        return new Promise((resolve, reject) => {
 
             DB.Get().then((db) => {
                 let collection = db.db('blogs_db').collection('users');
 
-                collection.find().toArray((err, result) => {
-                    if(err){
-                        reject(err);
-                    }
-                    reslove(result);
+                collection.find().toArray().then(result => {
+                    resolve(result);
+                }).catch(e => {
+                    reject(e);
                 });
             });
         });
@@ -71,17 +67,18 @@ class UserModel {
             user.encodePass();
             DB.Get().then((db) => {
                 let collection = db.db('blog_db').collection('users');
-                collection.insertOne(user.toJson(), (err, result) => {
-                    if(err){
-                        reject(err);
-                    }
+
+                collection.insertOne(user.toJson())
+                .then(result => {
                     reslove({'id':result.insertedId, 'username':user.getUserName()});
+                }).catch(e => {
+                    reject(e);
                 });
             })
         });
     }
 
-    updateUser(){
+    updateUser() {
 
     }
 }
